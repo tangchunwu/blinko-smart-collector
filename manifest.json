@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "Blinko智能收集器",
+  "version": "1.2.0",
+  "description": "智能收集网页内容到Blinko笔记，支持AI总结、划词收集和智能分类",
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "storage",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "commands": {
+    "quick-collect": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "快速收集当前页面"
+    },
+    "ai-summary": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
+        "mac": "Command+Shift+A"
+      },
+      "description": "AI总结当前文章"
+    },
+    "collect-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "收集选中文本"
+    },
+    "open-config": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+O",
+        "mac": "Command+Shift+O"
+      },
+      "description": "打开配置页面"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { 
+      width: 350px; 
+      padding: 20px; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      color: white;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 20px;
+      color: #2c3e50;
+    }
+    .btn { 
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white; 
+      border: none; 
+      padding: 12px 15px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      margin: 5px 0; 
+      width: 100%;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .btn:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    .status { 
+      padding: 10px; 
+      margin: 10px 0; 
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .warning { background: #fff3cd; color: #856404; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    .title { 
+      font-weight: bold; 
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 18px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .url { 
+      font-size: 12px; 
+      color: #666; 
+      margin-bottom: 15px; 
+      word-break: break-all;
+      background: #f8f9fa;
+      padding: 8px;
+      border-radius: 6px;
+    }
+    .page-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #2c3e50;
+    }
+    .loading {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #667eea;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">🚀 Blinko 智能收集器</div>
+    <div id="pageInfo">
+      <div id="pageTitle" class="page-title">加载中...</div>
+      <div id="pageUrl" class="url"></div>
+    </div>
+    
+    <button id="savePageBtn" class="btn">📌 保存当前页面</button>
+    <button id="aiSummaryBtn" class="btn">🤖 AI总结文章</button>
+    <button id="smartAnalyzeBtn" class="btn">🧠 智能分析收集</button>
+    <button id="configBtn" class="btn" style="background: linear-gradient(45deg, #95a5a6, #7f8c8d);">⚙️ 配置设置</button>
+    
+    <div id="status"></div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
