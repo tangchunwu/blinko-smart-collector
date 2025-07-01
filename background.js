@@ -108,40 +108,52 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 });
 
 // 处理来自popup的消息
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  try {
-    switch (message.action) {
-      case 'saveCurrentPage':
-        await saveCurrentPage(message.tab);
-        break;
-      case 'aiSummaryArticle':
-        await aiSummaryArticle(message.tab);
-        break;
-      case 'smartAnalyzeAndCollect':
-        await smartAnalyzeAndCollect(message.tab);
-        break;
-      case 'generateAISummaryOnly':
-        const summary = await generateAISummaryOnly(message.tab, message.pageInfo);
-        sendResponse({ summary: summary });
-        break;
-      case 'classifyContent':
-        const classification = await classifyContent(message.pageInfo, message.url);
-        sendResponse(classification);
-        break;
-      case 'saveToBlinko':
-        await saveToBlinko(message.content);
-        break;
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  (async () => {
+    try {
+      console.log('Background收到消息:', message.action);
+
+      switch (message.action) {
+        case 'saveCurrentPage':
+          await saveCurrentPage(message.tab);
+          sendResponse({ success: true });
+          break;
+        case 'aiSummaryArticle':
+          await aiSummaryArticle(message.tab);
+          sendResponse({ success: true });
+          break;
+        case 'smartAnalyzeAndCollect':
+          await smartAnalyzeAndCollect(message.tab);
+          sendResponse({ success: true });
+          break;
+        case 'generateAISummaryOnly':
+          try {
+            console.log('Background开始生成AI摘要...');
+            const summary = await generateAISummaryOnly(message.tab, message.pageInfo);
+            console.log('Background AI摘要生成完成，长度:', summary?.length);
+            sendResponse({ summary: summary });
+          } catch (error) {
+            console.error('Background AI摘要生成失败:', error);
+            sendResponse({ error: error.message });
+          }
+          break;
+        case 'classifyContent':
+          const classification = await classifyContent(message.pageInfo, message.url);
+          sendResponse(classification);
+          break;
+        case 'saveToBlinko':
+          await saveToBlinko(message.content);
+          sendResponse({ success: true });
+          break;
+        default:
+          sendResponse({ error: 'Unknown action: ' + message.action });
+      }
+    } catch (error) {
+      console.error('Background处理消息失败:', error);
+      sendResponse({ error: error.message });
     }
-  } catch (error) {
-    console.error('Background处理消息失败:', error);
-    // 发送错误消息到popup
-    chrome.runtime.sendMessage({
-      action: 'updatePopupStatus',
-      message: '❌ 操作失败：' + error.message,
-      type: 'error'
-    });
-    sendResponse({ error: error.message });
-  }
+  })();
+
   return true; // 保持消息通道开放以支持异步响应
 });
 
@@ -637,27 +649,34 @@ async function saveToBlinko(content) {
 // 仅生成AI摘要（不保存）
 async function generateAISummaryOnly(tab, pageInfo) {
   try {
+    console.log('开始生成AI摘要，tab:', tab?.title, 'pageInfo:', !!pageInfo);
+
     // 如果没有页面信息，先提取
     if (!pageInfo) {
+      console.log('提取页面详细信息...');
       const [result] = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: extractPageDetails
       });
       pageInfo = result.result;
+      console.log('页面信息提取结果:', pageInfo);
     }
 
     if (!pageInfo) {
-      throw new Error('无法提取页面内容');
+      throw new Error('无法提取页面基本信息，请确保页面已完全加载');
     }
 
     // 提取文章内容
+    console.log('提取文章内容...');
     const [contentResult] = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       function: extractArticleContent
     });
 
-    if (!contentResult.result) {
-      throw new Error('无法提取文章内容');
+    console.log('文章内容提取结果长度:', contentResult?.result?.length);
+
+    if (!contentResult.result || contentResult.result.length < 50) {
+      throw new Error('页面内容太少或无法提取有效内容，请尝试手动输入摘要');
     }
 
     const settings = await chrome.storage.sync.get([
@@ -665,8 +684,15 @@ async function generateAISummaryOnly(tab, pageInfo) {
       'aiMaxTokens', 'aiTopP', 'aiTimeout', 'aiSystemPrompt', 'summaryLength'
     ]);
 
+    console.log('AI配置:', {
+      hasApiKey: !!settings.aiApiKey,
+      provider: settings.aiProvider,
+      baseUrl: settings.aiBaseUrl,
+      model: settings.aiModel
+    });
+
     if (!settings.aiApiKey) {
-      throw new Error('请先配置AI API密钥');
+      throw new Error('请先在设置中配置AI API密钥');
     }
 
     const baseUrl = settings.aiBaseUrl || 'https://api.openai.com/v1';
@@ -700,39 +726,68 @@ async function generateAISummaryOnly(tab, pageInfo) {
 
     const endpoint = baseUrl.endsWith('/') ? baseUrl + 'chat/completions' : baseUrl + '/chat/completions';
 
+    console.log('AI请求配置:', {
+      endpoint: endpoint,
+      model: model,
+      maxTokens: adjustedMaxTokens,
+      contentLength: contentResult.result.length
+    });
+
     // 创建带超时的fetch请求
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
+      const requestBody = {
+        model: model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `请总结以下文章：\n\n标题：${tab.title}\n\n内容：${contentResult.result}` }
+        ],
+        max_tokens: adjustedMaxTokens,
+        temperature: temperature,
+        top_p: topP
+      };
+
+      console.log('发送AI请求...');
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${settings.aiApiKey}`
         },
-        body: JSON.stringify({
-          model: model,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: `请总结以下文章：\n\n标题：${tab.title}\n\n内容：${contentResult.result}` }
-          ],
-          max_tokens: adjustedMaxTokens,
-          temperature: temperature,
-          top_p: topP
-        }),
+        body: JSON.stringify(requestBody),
         signal: controller.signal
       });
 
       clearTimeout(timeoutId);
+      console.log('AI响应状态:', response.status);
 
       if (!response.ok) {
         const error = await response.text();
-        throw new Error(`AI服务调用失败: ${response.status} - ${error}`);
+        console.error('AI服务错误响应:', error);
+
+        if (response.status === 401) {
+          throw new Error('AI API密钥无效，请检查配置');
+        } else if (response.status === 429) {
+          throw new Error('AI服务请求过于频繁，请稍后重试');
+        } else if (response.status >= 500) {
+          throw new Error('AI服务暂时不可用，请稍后重试');
+        } else {
+          throw new Error(`AI服务调用失败: ${response.status} - ${error}`);
+        }
       }
 
       const data = await response.json();
-      return data.choices[0].message.content;
+      console.log('AI响应数据:', data);
+
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        throw new Error('AI服务返回数据格式异常');
+      }
+
+      const summary = data.choices[0].message.content;
+      console.log('AI摘要生成成功，长度:', summary?.length);
+      return summary;
 
     } catch (error) {
       clearTimeout(timeoutId);

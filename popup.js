@@ -6,6 +6,7 @@ let currentTags = [];
 document.addEventListener('DOMContentLoaded', async () => {
   // 获取当前页面信息
   currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
+  console.log('扩展初始化 - 当前标签页:', currentTab);
 
   // 初始化界面
   await initializeInterface();
@@ -33,6 +34,7 @@ async function initializeInterface() {
 
     if (result.result) {
       currentPageInfo = result.result;
+      console.log('页面信息提取成功:', currentPageInfo);
 
       // 生成智能标签
       const classification = await classifyContent(currentPageInfo, currentTab.url);
@@ -41,6 +43,8 @@ async function initializeInterface() {
       // 更新界面
       updateTagsDisplay();
       showStatus('✅ 页面分析完成', 'success');
+    } else {
+      console.warn('页面信息提取失败');
     }
   } catch (error) {
     console.error('初始化失败:', error);
@@ -107,24 +111,64 @@ async function generateAISummary() {
     aiGenerateText.textContent = '生成中...';
     aiGenerateBtn.disabled = true;
 
+    // 首先检查AI配置
+    const settings = await chrome.storage.sync.get(['aiApiKey', 'aiProvider', 'aiBaseUrl']);
+    console.log('AI配置检查:', { hasApiKey: !!settings.aiApiKey, provider: settings.aiProvider, baseUrl: settings.aiBaseUrl });
+
+    if (!settings.aiApiKey) {
+      throw new Error('请先在设置中配置AI API密钥');
+    }
+
     showStatus('🤖 正在生成AI摘要...', 'info');
+    console.log('开始生成AI摘要，当前页面:', currentTab?.title);
+    console.log('页面信息:', currentPageInfo);
 
     // 调用background脚本生成摘要
-    const response = await chrome.runtime.sendMessage({
-      action: 'generateAISummaryOnly',
-      tab: currentTab,
-      pageInfo: currentPageInfo
+    console.log('发送消息到background脚本...');
+    const response = await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({
+        action: 'generateAISummaryOnly',
+        tab: currentTab,
+        pageInfo: currentPageInfo
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('Chrome runtime错误:', chrome.runtime.lastError);
+          reject(new Error(chrome.runtime.lastError.message));
+        } else {
+          resolve(response);
+        }
+      });
     });
+
+    console.log('AI摘要响应:', response);
 
     if (response && response.summary) {
       summaryContent.value = response.summary;
       showStatus('✅ AI摘要生成完成', 'success');
+      console.log('AI摘要生成成功');
+    } else if (response && response.error) {
+      throw new Error(response.error);
     } else {
-      throw new Error('AI摘要生成失败');
+      // 提供降级选项
+      summaryContent.placeholder = 'AI摘要生成失败，您可以手动输入摘要内容...';
+      showStatus('⚠️ AI摘要生成失败，请手动输入或检查AI配置', 'warning');
+      console.warn('AI摘要响应无效:', response);
     }
   } catch (error) {
     console.error('AI摘要生成失败:', error);
-    showStatus('❌ AI摘要生成失败：' + error.message, 'error');
+
+    // 根据错误类型提供不同的提示
+    let errorMessage = error.message;
+    if (error.message.includes('API密钥')) {
+      errorMessage = '请先配置AI服务。点击右上角设置按钮进行配置。';
+    } else if (error.message.includes('网络') || error.message.includes('超时')) {
+      errorMessage = '网络连接失败，请检查网络或稍后重试。';
+    } else if (error.message.includes('无法提取')) {
+      errorMessage = '无法提取页面内容，请手动输入摘要。';
+    }
+
+    summaryContent.placeholder = '您可以手动输入摘要内容...';
+    showStatus('❌ ' + errorMessage, 'error');
   } finally {
     // 恢复按钮状态
     aiLoading.classList.add('hidden');
