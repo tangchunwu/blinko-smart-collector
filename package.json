@@ -1,0 +1,74 @@
+{
+  "name": "blinko-smart-collector",
+  "version": "2.0.0",
+  "description": "善思 Blinko 智能收集器 - 一个现代化的Chrome扩展，用于智能收集网页内容到Blinko笔记系统",
+  "main": "manifest.json",
+  "scripts": {
+    "build": "echo 'Chrome Extension - No build process needed'",
+    "test": "echo 'No tests specified'",
+    "lint": "echo 'No linting configured'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tangchunwu/blinko-smart-collector.git"
+  },
+  "keywords": [
+    "chrome-extension",
+    "blinko",
+    "note-taking",
+    "ai-summary",
+    "web-clipper",
+    "knowledge-management",
+    "智能收集",
+    "笔记",
+    "AI摘要",
+    "知识管理"
+  ],
+  "author": {
+    "name": "tangchunwu",
+    "email": "2024123408s@mails.ccnu.edu.cn",
+    "url": "https://github.com/tangchunwu"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tangchunwu/blinko-smart-collector/issues"
+  },
+  "homepage": "https://github.com/tangchunwu/blinko-smart-collector#readme",
+  "engines": {
+    "chrome": ">=88.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "manifest": {
+    "version": "3",
+    "permissions": [
+      "activeTab",
+      "contextMenus",
+      "storage",
+      "scripting",
+      "notifications"
+    ],
+    "host_permissions": [
+      "http://*/*",
+      "https://*/*"
+    ]
+  },
+  "features": [
+    "智能链接识别",
+    "AI摘要生成",
+    "个人想法记录",
+    "可视化标签管理",
+    "一键提交功能",
+    "多AI模型支持",
+    "智能分类系统",
+    "快捷键操作"
+  ],
+  "ai_services": [
+    "OpenAI",
+    "Claude",
+    "DeepSeek",
+    "通义千问",
+    "硅基流动",
+    "自定义兼容服务"
+  ]
+}
