@@ -271,23 +271,9 @@
       // 计算实际可用高度
       const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
-      drawerContainer.style.cssText = `
-        position: fixed !important;
-        top: 0 !important;
-        right: -400px !important;
-        width: 400px !important;
-        min-width: 400px !important;
-        max-width: 400px !important;
-        height: ${viewportHeight}px !important;
-        max-height: 100vh !important;
-        z-index: 2147483647 !important;
-        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-        overflow: hidden !important;
-        background: white !important;
-        border-left: 1px solid #e0e0e0 !important;
-        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1) !important;
-      `;
+      // 设置容器基本属性（避免内联样式）
+      drawerContainer.className = 'blinko-drawer-container';
+      drawerContainer.setAttribute('data-height', viewportHeight);
 
       // 注入CSS样式
       const style = document.createElement('style');
@@ -394,7 +380,7 @@
 
     const container = document.getElementById('blinko-drawer-container');
     if (container) {
-      container.style.right = '0px';
+      container.classList.add('open');
       drawerVisible = true;
 
       // 发送页面信息
@@ -408,7 +394,7 @@
   function hideDrawer() {
     const container = document.getElementById('blinko-drawer-container');
     if (container) {
-      container.style.right = '-400px';
+      container.classList.remove('open');
       drawerVisible = false;
     }
   }

@@ -5,15 +5,26 @@
   padding: 0 !important;
 }
 
-#blinko-drawer-container {
+.blinko-drawer-container {
   all: initial !important;
   position: fixed !important;
   top: 0 !important;
   right: -400px !important;
   width: 400px !important;
+  min-width: 400px !important;
+  max-width: 400px !important;
   height: 100vh !important;
   z-index: 2147483647 !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: hidden !important;
+  background: white !important;
+  border-left: 1px solid #e0e0e0 !important;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.blinko-drawer-container.open {
+  right: 0 !important;
 }
 
 .blinko-drawer {
