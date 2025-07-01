@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Blinko智能收集器</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 头部区域 -->
+    <div class="header">
+      <div class="header-top">
+        <div class="logo">
+          <div class="logo-icon">🚀</div>
+          <span>Blinko收集器</span>
+        </div>
+        <button class="settings-btn" id="settingsBtn" title="打开设置">
+          ⚙️
+        </button>
+      </div>
+      
+      <!-- 页面信息 -->
+      <div class="page-info">
+        <div class="page-title" id="pageTitle">正在加载页面信息...</div>
+        <div class="page-url" id="pageUrl"></div>
+      </div>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="main-content">
+      <!-- 标签页切换 -->
+      <div class="tab-container">
+        <button class="tab-btn active" id="summaryTab" data-tab="summary">
+          📄 原文摘要
+        </button>
+        <button class="tab-btn" id="aiTab" data-tab="ai">
+          🤖 AI总结
+        </button>
+      </div>
+
+      <!-- 原文摘要内容 -->
+      <div class="content-section active" id="summarySection">
+        <textarea 
+          class="content-textarea" 
+          id="summaryContent"
+          placeholder="粘贴原文摘要...&#10;&#10;可以手动编辑和添加内容"
+          rows="6"
+        ></textarea>
+      </div>
+
+      <!-- AI总结内容 -->
+      <div class="content-section" id="aiSection">
+        <textarea 
+          class="content-textarea" 
+          id="aiContent"
+          placeholder="点击生成AI总结...&#10;&#10;生成后可以编辑和完善内容"
+          rows="6"
+          readonly
+        ></textarea>
+        <button class="btn btn-secondary" id="generateAiBtn">
+          🤖 生成AI总结
+        </button>
+      </div>
+
+      <!-- 个人想法区域 -->
+      <div class="thoughts-section">
+        <div class="section-title">
+          <span class="section-icon">💭</span>
+          个人想法
+        </div>
+        <textarea 
+          class="content-textarea" 
+          id="thoughtsContent"
+          placeholder="输入你的想法...&#10;&#10;对这个内容的思考、感悟或者相关联想"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <!-- 标签管理区域 -->
+      <div class="tags-section">
+        <div class="section-title">
+          <span class="section-icon">🏷️</span>
+          智能标签
+        </div>
+        <div class="tags-container" id="tagsContainer">
+          <!-- 标签将通过JavaScript动态添加 -->
+        </div>
+        <input 
+          type="text" 
+          class="tag-input" 
+          id="tagInput"
+          placeholder="输入新标签，按回车添加"
+        >
+      </div>
+    </div>
+
+    <!-- 操作按钮区域 -->
+    <div class="actions">
+      <div class="action-buttons">
+        <button class="btn btn-secondary" id="previewBtn">
+          👁️ 预览
+        </button>
+        <button class="btn btn-primary" id="saveBtn">
+          💾 保存到Blinko
+        </button>
+      </div>
+    </div>
+
+    <!-- 状态提示 -->
+    <div id="status" class="status" style="display: none;"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
