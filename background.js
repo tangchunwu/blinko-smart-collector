@@ -91,7 +91,7 @@ chrome.commands.onCommand.addListener(async (command) => {
       await collectSelectedText(null, tab);
       break;
     case 'toggle-sidebar':
-      await toggleSidebar(tab);
+      await toggleDrawer(tab);
       break;
     default:
       console.log('未知快捷键命令:', command);
@@ -114,7 +114,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       await smartAnalyzeAndCollect(tab);
       break;
     case 'toggleSidebar':
-      await toggleSidebar(tab);
+      await toggleDrawer(tab);
       break;
   }
 });
@@ -751,17 +751,17 @@ function showNotification(message) {
   });
 }
 
-// ==================== 侧边栏功能 ====================
+// ==================== 抽屉式侧边栏功能 ====================
 
-// 切换侧边栏显示
-async function toggleSidebar(tab) {
+// 切换抽屉显示
+async function toggleDrawer(tab) {
   try {
     await chrome.tabs.sendMessage(tab.id, {
-      action: 'toggleSidebar'
+      action: 'toggleDrawer'
     });
   } catch (error) {
-    console.error('切换侧边栏失败:', error);
-    showNotification('❌ 切换侧边栏失败');
+    console.error('切换抽屉失败:', error);
+    showNotification('❌ 切换抽屉失败');
   }
 }
 

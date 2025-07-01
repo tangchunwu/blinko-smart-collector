@@ -15,13 +15,14 @@
         highlightCollectedText();
         break;
       case 'toggleSidebar':
-        toggleSidebar();
+      case 'toggleDrawer':
+        toggleDrawer();
         break;
-      case 'showSidebar':
-        showSidebar();
+      case 'showDrawer':
+        showDrawer();
         break;
-      case 'hideSidebar':
-        hideSidebar();
+      case 'hideDrawer':
+        hideDrawer();
         break;
     }
   });
@@ -222,15 +223,16 @@
     return null;
   }
 
-  // ==================== 侧边栏功能 ====================
+  // ==================== 抽屉式侧边栏功能 ====================
 
   // 全局变量
-  let sidebarInjected = false;
+  let drawerInjected = false;
+  let drawerVisible = false;
 
-  // 清理已存在的侧边栏
-  function cleanupExistingSidebar() {
-    const existingContainer = document.getElementById('blinko-sidebar-container');
-    const existingStyles = document.getElementById('blinko-sidebar-styles');
+  // 清理已存在的抽屉
+  function cleanupExistingDrawer() {
+    const existingContainer = document.getElementById('blinko-drawer-container');
+    const existingStyles = document.getElementById('blinko-drawer-styles');
 
     if (existingContainer) {
       existingContainer.remove();
@@ -239,20 +241,21 @@
       existingStyles.remove();
     }
 
-    sidebarInjected = false;
+    drawerInjected = false;
+    drawerVisible = false;
   }
 
-  // 页面加载时清理可能存在的侧边栏
-  cleanupExistingSidebar();
+  // 页面加载时清理可能存在的抽屉
+  cleanupExistingDrawer();
 
-  // 注入侧边栏
-  async function injectSidebar() {
-    if (sidebarInjected) return;
+  // 注入抽屉
+  async function injectDrawer() {
+    if (drawerInjected) return;
 
     try {
-      // 获取侧边栏HTML内容
-      const sidebarUrl = chrome.runtime.getURL('sidebar.html');
-      const response = await fetch(sidebarUrl);
+      // 获取HTML内容
+      const drawerUrl = chrome.runtime.getURL('sidebar.html');
+      const response = await fetch(drawerUrl);
       const htmlContent = await response.text();
 
       // 获取CSS内容
@@ -260,10 +263,10 @@
       const cssResponse = await fetch(cssUrl);
       const cssContent = await cssResponse.text();
 
-      // 创建侧边栏容器
-      const sidebarContainer = document.createElement('div');
-      sidebarContainer.id = 'blinko-sidebar-container';
-      sidebarContainer.style.cssText = `
+      // 创建抽屉容器
+      const drawerContainer = document.createElement('div');
+      drawerContainer.id = 'blinko-drawer-container';
+      drawerContainer.style.cssText = `
         position: fixed;
         top: 0;
         right: -400px;
@@ -276,17 +279,17 @@
 
       // 注入CSS样式
       const style = document.createElement('style');
-      style.id = 'blinko-sidebar-styles';
+      style.id = 'blinko-drawer-styles';
       style.textContent = cssContent;
       document.head.appendChild(style);
 
       // 解析HTML并注入内容
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlContent, 'text/html');
-      const sidebarContent = doc.body.innerHTML;
-      sidebarContainer.innerHTML = sidebarContent;
+      const drawerContent = doc.body.innerHTML;
+      drawerContainer.innerHTML = drawerContent;
 
-      document.body.appendChild(sidebarContainer);
+      document.body.appendChild(drawerContainer);
 
       // 加载JavaScript功能
       const jsUrl = chrome.runtime.getURL('sidebar.js');
@@ -294,41 +297,78 @@
       script.src = jsUrl;
       document.head.appendChild(script);
 
-      sidebarInjected = true;
-      console.log('Blinko侧边栏已注入');
+      drawerInjected = true;
+      console.log('Blinko抽屉已注入');
+
+      // 设置页面信息
+      setTimeout(() => {
+        sendPageInfoToDrawer();
+      }, 100);
 
     } catch (error) {
-      console.error('注入侧边栏失败:', error);
+      console.error('注入抽屉失败:', error);
     }
   }
 
-  // 显示侧边栏
-  async function showSidebar() {
-    if (!sidebarInjected) {
-      await injectSidebar();
+  // 发送页面信息到抽屉
+  function sendPageInfoToDrawer() {
+    const container = document.getElementById('blinko-drawer-container');
+    if (container) {
+      const iframe = container.querySelector('iframe');
+      if (iframe) {
+        iframe.contentWindow.postMessage({
+          action: 'updatePageInfo',
+          pageInfo: {
+            title: document.title,
+            url: window.location.href
+          }
+        }, '*');
+      } else {
+        // 直接发送消息到抽屉窗口
+        window.postMessage({
+          action: 'updatePageInfo',
+          pageInfo: {
+            title: document.title,
+            url: window.location.href
+          }
+        }, '*');
+      }
+    }
+  }
+
+  // 显示抽屉
+  async function showDrawer() {
+    if (!drawerInjected) {
+      await injectDrawer();
     }
 
-    const container = document.getElementById('blinko-sidebar-container');
+    const container = document.getElementById('blinko-drawer-container');
     if (container) {
       container.style.right = '0px';
+      drawerVisible = true;
+
+      // 发送页面信息
+      setTimeout(() => {
+        sendPageInfoToDrawer();
+      }, 100);
     }
   }
 
-  // 隐藏侧边栏
-  function hideSidebar() {
-    const container = document.getElementById('blinko-sidebar-container');
+  // 隐藏抽屉
+  function hideDrawer() {
+    const container = document.getElementById('blinko-drawer-container');
     if (container) {
       container.style.right = '-400px';
+      drawerVisible = false;
     }
   }
 
-  // 切换侧边栏
-  async function toggleSidebar() {
-    const container = document.getElementById('blinko-sidebar-container');
-    if (!container || container.style.right === '-400px' || !container.style.right) {
-      await showSidebar();
+  // 切换抽屉
+  async function toggleDrawer() {
+    if (!drawerVisible) {
+      await showDrawer();
     } else {
-      hideSidebar();
+      hideDrawer();
     }
   }
 
@@ -336,24 +376,53 @@
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && e.key === 'B') {
       e.preventDefault();
-      toggleSidebar();
+      toggleDrawer();
     }
   });
 
-  // 监听来自侧边栏的消息
+  // 监听来自抽屉的消息
   window.addEventListener('message', (event) => {
     if (event.data && event.data.action) {
       switch (event.data.action) {
-        case 'hideSidebar':
-          hideSidebar();
+        case 'closeDrawer':
+          hideDrawer();
           break;
-        case 'toggleSidebar':
-          toggleSidebar();
+        case 'getPageInfo':
+          sendPageInfoToDrawer();
+          break;
+        case 'submitToBlinko':
+          handleSubmitToBlinko(event.data.data);
           break;
       }
     }
   });
 
-  // 不自动注入侧边栏，只在用户主动调用时注入
+  // 处理提交到Blinko
+  async function handleSubmitToBlinko(data) {
+    try {
+      // 发送到background script
+      const response = await chrome.runtime.sendMessage({
+        action: 'saveToBlinko',
+        data: data
+      });
+
+      // 发送结果回抽屉
+      window.postMessage({
+        action: 'submitResult',
+        success: response.success,
+        message: response.message
+      }, '*');
+
+    } catch (error) {
+      console.error('提交失败:', error);
+      window.postMessage({
+        action: 'submitResult',
+        success: false,
+        message: '提交失败: ' + error.message
+      }, '*');
+    }
+  }
+
+  // 不自动注入抽屉，只在用户主动调用时注入
 
 })();

@@ -2,131 +2,63 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Blinko侧边栏</title>
+  <title>Blinko收集器</title>
   <link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
-  <div class="blinko-sidebar" id="blinkoSidebar">
-    <!-- 侧边栏头部 -->
-    <div class="sidebar-header">
-      <div class="sidebar-title">
-        <div class="logo">
-          <span class="logo-icon">🚀</span>
-          <span class="logo-text">Blinko收集器</span>
-        </div>
-        <button class="close-btn" id="closeSidebar" title="关闭侧边栏">
-          ✕
-        </button>
+  <div class="blinko-drawer" id="blinkoDrawer">
+    <!-- 头部 -->
+    <div class="drawer-header">
+      <div class="header-title">
+        <span class="title-icon">📝</span>
+        <span class="title-text">Blinko收集器</span>
       </div>
-      
-      <!-- 页面信息 -->
-      <div class="page-info">
-        <div class="page-title" id="sidebarPageTitle">正在加载页面信息...</div>
-        <div class="page-url" id="sidebarPageUrl"></div>
+      <button class="close-btn" id="closeDrawer" title="关闭">×</button>
+    </div>
+
+    <!-- 页面信息 -->
+    <div class="page-info">
+      <div class="info-item">
+        <label>页面标题</label>
+        <div class="page-title" id="pageTitle">正在获取...</div>
+      </div>
+      <div class="info-item">
+        <label>页面链接</label>
+        <div class="page-url" id="pageUrl">正在获取...</div>
       </div>
     </div>
 
-    <!-- 主内容区域 -->
-    <div class="sidebar-content">
-      <!-- 快速操作按钮 -->
-      <div class="quick-actions">
-        <button class="action-btn primary" id="quickCollectBtn">
-          <span class="btn-icon">📝</span>
-          <span class="btn-text">快速收集</span>
-        </button>
-        <button class="action-btn ai" id="aiSummaryBtn">
-          <span class="btn-icon">🤖</span>
-          <span class="btn-text">AI总结</span>
-        </button>
-      </div>
-
-      <!-- 内容编辑区域 -->
-      <div class="content-section">
-        <div class="section-header">
-          <span class="section-icon">📄</span>
-          <span class="section-title">原文摘要</span>
-          <button class="refresh-btn" id="refreshContent" title="刷新内容">🔄</button>
-        </div>
-        <textarea 
-          class="content-textarea" 
-          id="originalContent"
-          placeholder="粘贴原文摘要...&#10;&#10;可以手动编辑和添加内容"
-          rows="6"
-        ></textarea>
-      </div>
-
-      <!-- AI总结区域 -->
-      <div class="content-section">
-        <div class="section-header">
-          <span class="section-icon">🤖</span>
-          <span class="section-title">AI总结</span>
-          <button class="generate-btn" id="generateAiSummary" title="生成AI总结">✨</button>
-        </div>
-        <textarea 
-          class="content-textarea" 
-          id="aiSummaryContent"
-          placeholder="点击生成AI总结...&#10;&#10;生成后可以编辑和完善内容"
+    <!-- 内容输入 -->
+    <div class="content-form">
+      <div class="form-group">
+        <label for="summaryInput">内容摘要</label>
+        <textarea
+          id="summaryInput"
+          placeholder="请输入页面内容摘要..."
           rows="4"
-          readonly
         ></textarea>
       </div>
 
-      <!-- 个人想法区域 -->
-      <div class="content-section">
-        <div class="section-header">
-          <span class="section-icon">💭</span>
-          <span class="section-title">个人想法</span>
-        </div>
-        <textarea 
-          class="content-textarea" 
-          id="personalThoughts"
-          placeholder="输入你的想法...&#10;&#10;对这个内容的思考、感悟或者相关联想"
+      <div class="form-group">
+        <label for="thoughtsInput">个人感想</label>
+        <textarea
+          id="thoughtsInput"
+          placeholder="请输入你的想法和感想..."
           rows="3"
         ></textarea>
       </div>
-
-      <!-- 标签管理区域 -->
-      <div class="content-section">
-        <div class="section-header">
-          <span class="section-icon">🏷️</span>
-          <span class="section-title">智能标签</span>
-          <button class="generate-btn" id="generateTags" title="生成智能标签">🎯</button>
-        </div>
-        <div class="tags-container" id="tagsContainer">
-          <!-- 标签将通过JavaScript动态添加 -->
-        </div>
-        <input 
-          type="text" 
-          class="tag-input" 
-          id="tagInput"
-          placeholder="输入新标签，按回车添加"
-        >
-      </div>
     </div>
 
-    <!-- 底部操作区域 -->
-    <div class="sidebar-footer">
-      <div class="footer-actions">
-        <button class="footer-btn secondary" id="previewBtn">
-          <span class="btn-icon">👁️</span>
-          <span class="btn-text">预览</span>
-        </button>
-        <button class="footer-btn primary" id="saveToBlinkoBtn">
-          <span class="btn-icon">💾</span>
-          <span class="btn-text">保存到Blinko</span>
-        </button>
-      </div>
-      
-      <!-- 状态提示 -->
-      <div class="status-bar">
-        <div id="sidebarStatus" class="status-message"></div>
-      </div>
+    <!-- 操作按钮 -->
+    <div class="action-buttons">
+      <button class="btn btn-primary" id="submitBtn">
+        <span class="btn-icon">📤</span>
+        <span class="btn-text">提交到Blinko</span>
+      </button>
     </div>
-  </div>
 
-  <!-- 侧边栏切换按钮 -->
-  <div class="sidebar-toggle" id="sidebarToggle" title="打开Blinko收集器">
-    <span class="toggle-icon">🚀</span>
+    <!-- 状态提示 -->
+    <div class="status-message" id="statusMessage"></div>
   </div>
 
   <script src="sidebar.js"></script>
