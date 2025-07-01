@@ -136,7 +136,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   } catch (error) {
     console.error('处理消息失败:', error);
     sendResponse({ success: false, error: error.message });
-    
     // 发送错误消息到popup
     chrome.runtime.sendMessage({
       action: 'updatePopupStatus',
@@ -144,7 +143,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       type: 'error'
     });
   }
-  
+
   // 对于异步消息，返回true表示将异步发送响应
   return true;
 });
@@ -153,7 +152,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 async function generateAISummaryForPopup(content, tab) {
   try {
     console.log('为Popup生成AI总结');
-    
+
     if (!content || content.trim().length === 0) {
       throw new Error('内容为空，无法生成总结');
     }
@@ -163,20 +162,20 @@ async function generateAISummaryForPopup(content, tab) {
       target: { tabId: tab.id },
       function: extractPageDetails
     });
-    
+
     let classification = { tags: ['#AI总结'], type: '文章' };
     if (pageResult.result) {
       classification = await classifyContent(pageResult.result, tab.url);
     }
-    
+
     const summary = await generateAISummary(content, tab.title, tab.url, classification);
-    
+
     return {
       success: true,
       summary: summary,
       classification: classification
     };
-    
+
   } catch (error) {
     console.error('AI总结生成失败:', error);
     return {
@@ -190,23 +189,23 @@ async function generateAISummaryForPopup(content, tab) {
 async function generateSmartTagsForPopup(content, url, title) {
   try {
     console.log('为Popup生成智能标签');
-    
+
     const pageInfo = {
       title: title,
       description: content.substring(0, 200),
       extractedKeywords: extractKeywordsFromText(content),
       domain: new URL(url).hostname
     };
-    
+
     const classification = await classifyContent(pageInfo, url);
-    
+
     return {
       success: true,
       tags: classification.tags,
       type: classification.type,
       keywords: classification.keywords
     };
-    
+
   } catch (error) {
     console.error('智能标签生成失败:', error);
     return {
@@ -221,18 +220,18 @@ async function generateSmartTagsForPopup(content, url, title) {
 async function saveToBlinkoForPopup(content) {
   try {
     console.log('从Popup保存到Blinko');
-    
+
     if (!content || content.trim().length === 0) {
       throw new Error('内容为空，无法保存');
     }
 
     await saveToBlinko(content);
-    
+
     return {
       success: true,
       message: '内容已成功保存到Blinko'
     };
-    
+
   } catch (error) {
     console.error('保存到Blinko失败:', error);
     return {
@@ -241,7 +240,6 @@ async function saveToBlinkoForPopup(content) {
     };
   }
 }
-
 // 智能分析并收集
 async function smartAnalyzeAndCollect(tab) {
   try {

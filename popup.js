@@ -1,3 +1,4 @@
+
 // Blinko智能收集器 - 增强版Popup脚本
 // 支持内容编辑、标签管理、个人想法等功能
 
@@ -530,3 +531,5 @@ chrome.runtime.onMessage.addListener((message) => {
     collector.showStatus(message.message, message.type);
   }
 });
+
+
