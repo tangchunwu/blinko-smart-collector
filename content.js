@@ -1,7 +1,9 @@
 // 页面内容脚本 - 处理页面级交互和快捷键反馈
 (function() {
   'use strict';
-  
+
+  let sidebarInjected = false;
+
   // 监听来自background的消息
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.action) {
@@ -13,6 +15,15 @@
         break;
       case 'highlightCollectedText':
         highlightCollectedText();
+        break;
+      case 'toggleSidebar':
+        toggleSidebar();
+        break;
+      case 'showSidebar':
+        showSidebar();
+        break;
+      case 'hideSidebar':
+        hideSidebar();
         break;
     }
   });
@@ -202,15 +213,111 @@
     const title = document.title;
     const meta = document.querySelector('meta[name="description"]');
     const description = meta ? meta.content : '';
-    
+
     // 基于URL和内容的简单页面类型检测
     if (url.includes('github.com')) return 'github';
     if (url.includes('stackoverflow.com')) return 'stackoverflow';
     if (url.includes('medium.com') || url.includes('dev.to')) return 'blog';
     if (document.querySelector('article')) return 'article';
     if (title.includes('documentation') || title.includes('docs')) return 'documentation';
-    
+
     return null;
   }
-  
+
+  // ==================== 侧边栏功能 ====================
+
+  // 注入侧边栏
+  function injectSidebar() {
+    if (sidebarInjected) return;
+
+    try {
+      // 创建侧边栏容器
+      const sidebarContainer = document.createElement('div');
+      sidebarContainer.id = 'blinko-sidebar-container';
+      sidebarContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 0;
+        height: 100vh;
+        z-index: 2147483647;
+        pointer-events: none;
+        transition: width 0.3s ease;
+      `;
+
+      // 创建iframe来隔离样式
+      const iframe = document.createElement('iframe');
+      iframe.id = 'blinko-sidebar-iframe';
+      iframe.style.cssText = `
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+        pointer-events: auto;
+      `;
+
+      sidebarContainer.appendChild(iframe);
+      document.body.appendChild(sidebarContainer);
+
+      // 加载侧边栏内容
+      const sidebarUrl = chrome.runtime.getURL('sidebar.html');
+      iframe.src = sidebarUrl;
+
+      sidebarInjected = true;
+      console.log('Blinko侧边栏已注入');
+
+    } catch (error) {
+      console.error('注入侧边栏失败:', error);
+    }
+  }
+
+  // 显示侧边栏
+  function showSidebar() {
+    if (!sidebarInjected) {
+      injectSidebar();
+    }
+
+    const container = document.getElementById('blinko-sidebar-container');
+    if (container) {
+      container.style.width = '380px';
+      container.style.pointerEvents = 'auto';
+    }
+  }
+
+  // 隐藏侧边栏
+  function hideSidebar() {
+    const container = document.getElementById('blinko-sidebar-container');
+    if (container) {
+      container.style.width = '0';
+      container.style.pointerEvents = 'none';
+    }
+  }
+
+  // 切换侧边栏
+  function toggleSidebar() {
+    const container = document.getElementById('blinko-sidebar-container');
+    if (!container || container.style.width === '0px' || !container.style.width) {
+      showSidebar();
+    } else {
+      hideSidebar();
+    }
+  }
+
+  // 监听快捷键
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'B') {
+      e.preventDefault();
+      toggleSidebar();
+    }
+  });
+
+  // 页面加载完成后自动注入侧边栏（隐藏状态）
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(injectSidebar, 1000);
+    });
+  } else {
+    setTimeout(injectSidebar, 1000);
+  }
+
 })();

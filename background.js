@@ -67,6 +67,13 @@ chrome.runtime.onInstalled.addListener(() => {
     title: '🧠 智能分析并收集',
     contexts: ['page']
   });
+
+  // 切换侧边栏菜单
+  chrome.contextMenus.create({
+    id: 'toggleSidebar',
+    title: '📋 切换侧边栏 (Ctrl+Shift+B)',
+    contexts: ['page']
+  });
 });
 
 // 处理快捷键命令
@@ -86,6 +93,11 @@ chrome.commands.onCommand.addListener(async (command) => {
     case 'open-config':
       chrome.runtime.openOptionsPage();
       break;
+    case 'toggle-sidebar':
+      await toggleSidebar(tab);
+      break;
+    default:
+      console.log('未知快捷键命令:', command);
   }
 });
 
@@ -103,6 +115,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       break;
     case 'smartAnalyze':
       await smartAnalyzeAndCollect(tab);
+      break;
+    case 'toggleSidebar':
+      await toggleSidebar(tab);
       break;
   }
 });
@@ -737,4 +752,42 @@ function showNotification(message) {
     title: 'Blinko智能收集器',
     message: message
   });
+}
+
+// ==================== 侧边栏功能 ====================
+
+// 切换侧边栏显示
+async function toggleSidebar(tab) {
+  try {
+    await chrome.tabs.sendMessage(tab.id, {
+      action: 'toggleSidebar'
+    });
+  } catch (error) {
+    console.error('切换侧边栏失败:', error);
+    showNotification('❌ 切换侧边栏失败');
+  }
+}
+
+// 显示侧边栏
+async function showSidebar(tab) {
+  try {
+    await chrome.tabs.sendMessage(tab.id, {
+      action: 'showSidebar'
+    });
+  } catch (error) {
+    console.error('显示侧边栏失败:', error);
+    showNotification('❌ 显示侧边栏失败');
+  }
+}
+
+// 隐藏侧边栏
+async function hideSidebar(tab) {
+  try {
+    await chrome.tabs.sendMessage(tab.id, {
+      action: 'hideSidebar'
+    });
+  } catch (error) {
+    console.error('隐藏侧边栏失败:', error);
+    showNotification('❌ 隐藏侧边栏失败');
+  }
 }
