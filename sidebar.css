@@ -1,23 +1,38 @@
-/* Blinko抽屉式侧边栏样式 */
-* {
-  box-sizing: border-box;
+/* Blinko抽屉式侧边栏样式 - 强制重置 */
+#blinko-drawer-container * {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#blinko-drawer-container {
+  all: initial !important;
+  position: fixed !important;
+  top: 0 !important;
+  right: -400px !important;
+  width: 400px !important;
+  height: 100vh !important;
+  z-index: 2147483647 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
 .blinko-drawer {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  min-height: 600px; /* 确保最小高度 */
-  max-height: 100vh; /* 防止超出视口 */
-  background: #ffffff;
-  border-left: 1px solid #e0e0e0;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  position: relative !important;
+  width: 100% !important;
+  height: 100vh !important;
+  min-height: 600px !important; /* 确保最小高度 */
+  max-height: 100vh !important; /* 防止超出视口 */
+  background: #ffffff !important;
+  border-left: 1px solid #e0e0e0 !important;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 14px !important;
+  color: #333 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Mac特定修复 */
@@ -31,13 +46,15 @@
 
 /* 头部样式 */
 .drawer-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
-  flex-shrink: 0;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 16px 20px !important;
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .header-title {
