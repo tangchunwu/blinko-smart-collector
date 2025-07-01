@@ -131,38 +131,39 @@ class BlinkoSidebar {
   }
 
   showSidebar() {
-    const sidebar = document.getElementById('blinkoSidebar');
+    // 侧边栏显示由content.js控制
+    this.isVisible = true;
     const toggle = document.getElementById('sidebarToggle');
-    
-    if (sidebar) {
-      sidebar.classList.add('show');
-      this.isVisible = true;
-    }
-    
     if (toggle) {
       toggle.classList.add('hidden');
     }
   }
 
   hideSidebar() {
-    const sidebar = document.getElementById('blinkoSidebar');
+    // 侧边栏隐藏由content.js控制
+    this.isVisible = false;
     const toggle = document.getElementById('sidebarToggle');
-    
-    if (sidebar) {
-      sidebar.classList.remove('show');
-      this.isVisible = false;
-    }
-    
     if (toggle) {
       toggle.classList.remove('hidden');
+    }
+
+    // 通知父页面隐藏侧边栏
+    if (window.parent !== window) {
+      window.parent.postMessage({ action: 'hideSidebar' }, '*');
     }
   }
 
   toggleSidebar() {
-    if (this.isVisible) {
-      this.hideSidebar();
+    // 通知父页面切换侧边栏
+    if (window.parent !== window) {
+      window.parent.postMessage({ action: 'toggleSidebar' }, '*');
     } else {
-      this.showSidebar();
+      // 如果不在iframe中，直接切换
+      if (this.isVisible) {
+        this.hideSidebar();
+      } else {
+        this.showSidebar();
+      }
     }
   }
 
@@ -503,10 +504,20 @@ class BlinkoSidebar {
 
 // 初始化侧边栏
 let sidebar;
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+
+// 等待DOM加载完成后初始化
+function initSidebar() {
+  if (document.getElementById('blinkoSidebar')) {
     sidebar = new BlinkoSidebar();
-  });
+  } else {
+    // 如果元素还没有加载，等待一下再试
+    setTimeout(initSidebar, 100);
+  }
+}
+
+// 立即尝试初始化，或者等待DOM加载
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSidebar);
 } else {
-  sidebar = new BlinkoSidebar();
+  initSidebar();
 }

@@ -227,41 +227,53 @@
   // ==================== 侧边栏功能 ====================
 
   // 注入侧边栏
-  function injectSidebar() {
+  async function injectSidebar() {
     if (sidebarInjected) return;
 
     try {
+      // 获取侧边栏HTML内容
+      const sidebarUrl = chrome.runtime.getURL('sidebar.html');
+      const response = await fetch(sidebarUrl);
+      const htmlContent = await response.text();
+
+      // 获取CSS内容
+      const cssUrl = chrome.runtime.getURL('sidebar.css');
+      const cssResponse = await fetch(cssUrl);
+      const cssContent = await cssResponse.text();
+
       // 创建侧边栏容器
       const sidebarContainer = document.createElement('div');
       sidebarContainer.id = 'blinko-sidebar-container';
       sidebarContainer.style.cssText = `
         position: fixed;
         top: 0;
-        right: 0;
-        width: 0;
+        right: -400px;
+        width: 400px;
         height: 100vh;
         z-index: 2147483647;
-        pointer-events: none;
-        transition: width 0.3s ease;
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       `;
 
-      // 创建iframe来隔离样式
-      const iframe = document.createElement('iframe');
-      iframe.id = 'blinko-sidebar-iframe';
-      iframe.style.cssText = `
-        width: 100%;
-        height: 100%;
-        border: none;
-        background: transparent;
-        pointer-events: auto;
-      `;
+      // 注入CSS样式
+      const style = document.createElement('style');
+      style.id = 'blinko-sidebar-styles';
+      style.textContent = cssContent;
+      document.head.appendChild(style);
 
-      sidebarContainer.appendChild(iframe);
+      // 解析HTML并注入内容
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+      const sidebarContent = doc.body.innerHTML;
+      sidebarContainer.innerHTML = sidebarContent;
+
       document.body.appendChild(sidebarContainer);
 
-      // 加载侧边栏内容
-      const sidebarUrl = chrome.runtime.getURL('sidebar.html');
-      iframe.src = sidebarUrl;
+      // 加载JavaScript功能
+      const jsUrl = chrome.runtime.getURL('sidebar.js');
+      const script = document.createElement('script');
+      script.src = jsUrl;
+      document.head.appendChild(script);
 
       sidebarInjected = true;
       console.log('Blinko侧边栏已注入');
@@ -272,15 +284,14 @@
   }
 
   // 显示侧边栏
-  function showSidebar() {
+  async function showSidebar() {
     if (!sidebarInjected) {
-      injectSidebar();
+      await injectSidebar();
     }
 
     const container = document.getElementById('blinko-sidebar-container');
     if (container) {
-      container.style.width = '380px';
-      container.style.pointerEvents = 'auto';
+      container.style.right = '0px';
     }
   }
 
@@ -288,16 +299,15 @@
   function hideSidebar() {
     const container = document.getElementById('blinko-sidebar-container');
     if (container) {
-      container.style.width = '0';
-      container.style.pointerEvents = 'none';
+      container.style.right = '-400px';
     }
   }
 
   // 切换侧边栏
-  function toggleSidebar() {
+  async function toggleSidebar() {
     const container = document.getElementById('blinko-sidebar-container');
-    if (!container || container.style.width === '0px' || !container.style.width) {
-      showSidebar();
+    if (!container || container.style.right === '-400px' || !container.style.right) {
+      await showSidebar();
     } else {
       hideSidebar();
     }
@@ -308,6 +318,20 @@
     if (e.ctrlKey && e.shiftKey && e.key === 'B') {
       e.preventDefault();
       toggleSidebar();
+    }
+  });
+
+  // 监听来自侧边栏的消息
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.action) {
+      switch (event.data.action) {
+        case 'hideSidebar':
+          hideSidebar();
+          break;
+        case 'toggleSidebar':
+          toggleSidebar();
+          break;
+      }
     }
   });
 
