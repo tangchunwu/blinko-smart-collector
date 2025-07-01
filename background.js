@@ -90,9 +90,6 @@ chrome.commands.onCommand.addListener(async (command) => {
     case 'collect-selection':
       await collectSelectedText(null, tab);
       break;
-    case 'open-config':
-      chrome.runtime.openOptionsPage();
-      break;
     case 'toggle-sidebar':
       await toggleSidebar(tab);
       break;

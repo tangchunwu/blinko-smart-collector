@@ -55,13 +55,6 @@
       },
       "description": "收集选中文本"
     },
-    "open-config": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+O",
-        "mac": "Command+Shift+O"
-      },
-      "description": "打开配置页面"
-    },
     "toggle-sidebar": {
       "suggested_key": {
         "default": "Ctrl+Shift+B",
