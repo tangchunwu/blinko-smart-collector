@@ -2,8 +2,6 @@
 (function() {
   'use strict';
 
-  let sidebarInjected = false;
-
   // 监听来自background的消息
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.action) {
@@ -226,6 +224,27 @@
 
   // ==================== 侧边栏功能 ====================
 
+  // 全局变量
+  let sidebarInjected = false;
+
+  // 清理已存在的侧边栏
+  function cleanupExistingSidebar() {
+    const existingContainer = document.getElementById('blinko-sidebar-container');
+    const existingStyles = document.getElementById('blinko-sidebar-styles');
+
+    if (existingContainer) {
+      existingContainer.remove();
+    }
+    if (existingStyles) {
+      existingStyles.remove();
+    }
+
+    sidebarInjected = false;
+  }
+
+  // 页面加载时清理可能存在的侧边栏
+  cleanupExistingSidebar();
+
   // 注入侧边栏
   async function injectSidebar() {
     if (sidebarInjected) return;
@@ -335,13 +354,6 @@
     }
   });
 
-  // 页面加载完成后自动注入侧边栏（隐藏状态）
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(injectSidebar, 1000);
-    });
-  } else {
-    setTimeout(injectSidebar, 1000);
-  }
+  // 不自动注入侧边栏，只在用户主动调用时注入
 
 })();
