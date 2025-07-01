@@ -8,18 +8,42 @@ class BlinkoDrawer {
 
   async init() {
     try {
+      // 调试信息
+      this.logDebugInfo();
+
       // 绑定事件
       this.bindEvents();
-      
+
       // 获取页面信息
       await this.loadPageInfo();
-      
+
       // 加载配置
       await this.loadConfig();
-      
+
       console.log('Blinko抽屉初始化完成');
     } catch (error) {
       console.error('抽屉初始化失败:', error);
+    }
+  }
+
+  logDebugInfo() {
+    const drawer = document.getElementById('blinkoDrawer');
+    if (drawer) {
+      const rect = drawer.getBoundingClientRect();
+      console.log('抽屉调试信息:', {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        documentHeight: document.documentElement.clientHeight,
+        drawerRect: {
+          width: rect.width,
+          height: rect.height,
+          top: rect.top,
+          bottom: rect.bottom
+        },
+        computedStyle: window.getComputedStyle(drawer)
+      });
     }
   }
 

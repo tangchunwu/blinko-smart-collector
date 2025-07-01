@@ -266,15 +266,21 @@
       // 创建抽屉容器
       const drawerContainer = document.createElement('div');
       drawerContainer.id = 'blinko-drawer-container';
+
+      // 计算实际可用高度
+      const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
       drawerContainer.style.cssText = `
         position: fixed;
         top: 0;
         right: -400px;
         width: 400px;
-        height: 100vh;
+        height: ${viewportHeight}px;
+        max-height: 100vh;
         z-index: 2147483647;
         transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        overflow: hidden;
       `;
 
       // 注入CSS样式
@@ -299,6 +305,15 @@
 
       drawerInjected = true;
       console.log('Blinko抽屉已注入');
+      console.log('视口高度:', viewportHeight);
+      console.log('用户代理:', navigator.userAgent);
+
+      // 监听窗口大小变化
+      const resizeHandler = () => {
+        const newHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        drawerContainer.style.height = `${newHeight}px`;
+      };
+      window.addEventListener('resize', resizeHandler);
 
       // 设置页面信息
       setTimeout(() => {
