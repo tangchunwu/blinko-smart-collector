@@ -253,13 +253,14 @@
     if (drawerInjected) return;
 
     try {
-      // 获取HTML内容
-      const drawerUrl = chrome.runtime.getURL('sidebar.html');
+      // 获取HTML内容（添加时间戳防止缓存）
+      const timestamp = Date.now();
+      const drawerUrl = chrome.runtime.getURL('sidebar.html') + '?v=' + timestamp;
       const response = await fetch(drawerUrl);
       const htmlContent = await response.text();
 
-      // 获取CSS内容
-      const cssUrl = chrome.runtime.getURL('sidebar.css');
+      // 获取CSS内容（添加时间戳防止缓存）
+      const cssUrl = chrome.runtime.getURL('sidebar.css') + '?v=' + timestamp;
       const cssResponse = await fetch(cssUrl);
       const cssContent = await cssResponse.text();
 
@@ -297,10 +298,16 @@
 
       document.body.appendChild(drawerContainer);
 
-      // 加载JavaScript功能
-      const jsUrl = chrome.runtime.getURL('sidebar.js');
+      // 加载JavaScript功能（添加时间戳防止缓存）
+      const jsUrl = chrome.runtime.getURL('sidebar.js') + '?v=' + Date.now();
       const script = document.createElement('script');
       script.src = jsUrl;
+      script.onload = () => {
+        console.log('Sidebar.js 加载成功');
+      };
+      script.onerror = (error) => {
+        console.error('Sidebar.js 加载失败:', error);
+      };
       document.head.appendChild(script);
 
       drawerInjected = true;

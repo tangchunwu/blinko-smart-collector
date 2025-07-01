@@ -1,4 +1,6 @@
-// Blinko抽屉式侧边栏脚本
+// Blinko抽屉式侧边栏脚本 - 版本 2.0
+console.log('🚀 Blinko抽屉式侧边栏脚本已加载 - 版本 2.0');
+
 class BlinkoDrawer {
   constructor() {
     this.pageInfo = {};
