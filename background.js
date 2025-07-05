@@ -137,6 +137,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ error: error.message });
           }
           break;
+        case 'generateSelectedTextSummary':
+          try {
+            console.log('Background开始生成选中文本AI总结...');
+            const summary = await generateSelectedTextSummary(message.selectedText, message.tab, message.pageInfo);
+            console.log('Background选中文本AI总结生成完成，长度:', summary?.length);
+            sendResponse({ summary: summary });
+          } catch (error) {
+            console.error('Background选中文本AI总结生成失败:', error);
+            sendResponse({ error: error.message });
+          }
+          break;
         case 'classifyContent':
           const classification = await classifyContent(message.pageInfo, message.url);
           sendResponse(classification);
@@ -798,6 +809,135 @@ async function generateAISummaryOnly(tab, pageInfo) {
     }
   } catch (error) {
     console.error('AI摘要生成失败:', error);
+    throw error;
+  }
+}
+
+// 生成选中文本AI总结
+async function generateSelectedTextSummary(selectedText, tab, pageInfo) {
+  try {
+    console.log('开始生成选中文本AI总结，文本长度:', selectedText?.length);
+
+    if (!selectedText || selectedText.trim().length < 10) {
+      throw new Error('选中文本太短，无法生成有效总结');
+    }
+
+    const settings = await chrome.storage.sync.get([
+      'aiApiKey', 'aiProvider', 'aiBaseUrl', 'aiModel', 'aiCustomModel', 'aiTemperature',
+      'aiMaxTokens', 'aiTopP', 'aiTimeout', 'aiSystemPrompt', 'summaryLength'
+    ]);
+
+    console.log('AI配置:', {
+      hasApiKey: !!settings.aiApiKey,
+      provider: settings.aiProvider,
+      baseUrl: settings.aiBaseUrl,
+      model: settings.aiModel
+    });
+
+    if (!settings.aiApiKey) {
+      throw new Error('请先在设置中配置AI API密钥');
+    }
+
+    const baseUrl = settings.aiBaseUrl || 'https://api.openai.com/v1';
+    const model = await getActualModelName(settings);
+    const temperature = settings.aiTemperature || 0.7;
+    const maxTokens = settings.aiMaxTokens || 1000;
+    const topP = settings.aiTopP || 1.0;
+    const timeout = (settings.aiTimeout || 30) * 1000;
+
+    // 针对选中文本优化的系统提示词
+    let systemPrompt = '你是一个专业的文本总结助手。请用中文总结用户选中的文本内容，包括：1）核心观点；2）关键信息；3）重要细节。保持简洁明了，突出重点。';
+
+    // 根据文本长度调整总结策略
+    if (selectedText.length < 200) {
+      systemPrompt += '这是一段较短的文本，请提供精炼的要点总结。';
+    } else if (selectedText.length > 1000) {
+      systemPrompt += '这是一段较长的文本，请分层次总结主要内容和关键信息。';
+    }
+
+    // 根据总结长度调整maxTokens
+    const lengthSettings = {
+      short: Math.min(maxTokens, 200),
+      medium: Math.min(maxTokens, 400),
+      long: Math.min(maxTokens, 600),
+      adaptive: Math.min(maxTokens, Math.max(200, selectedText.length / 4))
+    };
+    const adjustedMaxTokens = lengthSettings[settings.summaryLength] || lengthSettings.adaptive;
+
+    const endpoint = baseUrl.endsWith('/') ? baseUrl + 'chat/completions' : baseUrl + '/chat/completions';
+
+    console.log('选中文本AI请求配置:', {
+      endpoint: endpoint,
+      model: model,
+      maxTokens: adjustedMaxTokens,
+      selectedTextLength: selectedText.length
+    });
+
+    // 创建带超时的fetch请求
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      const requestBody = {
+        model: model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `请总结以下选中的文本内容：\n\n${selectedText}` }
+        ],
+        max_tokens: adjustedMaxTokens,
+        temperature: temperature,
+        top_p: topP
+      };
+
+      console.log('发送选中文本AI请求...');
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${settings.aiApiKey}`
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      console.log('选中文本AI响应状态:', response.status);
+
+      if (!response.ok) {
+        const error = await response.text();
+        console.error('选中文本AI服务错误响应:', error);
+
+        if (response.status === 401) {
+          throw new Error('AI API密钥无效，请检查配置');
+        } else if (response.status === 429) {
+          throw new Error('AI服务请求过于频繁，请稍后重试');
+        } else if (response.status >= 500) {
+          throw new Error('AI服务暂时不可用，请稍后重试');
+        } else {
+          throw new Error(`AI服务调用失败: ${response.status} - ${error}`);
+        }
+      }
+
+      const data = await response.json();
+      console.log('选中文本AI响应数据:', data);
+
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        throw new Error('AI服务返回数据格式异常');
+      }
+
+      const summary = data.choices[0].message.content;
+      console.log('选中文本AI总结生成成功，长度:', summary?.length);
+      return summary;
+
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('AI请求超时，请检查网络连接或增加超时时间');
+      }
+      throw error;
+    }
+  } catch (error) {
+    console.error('选中文本AI总结生成失败:', error);
     throw error;
   }
 }

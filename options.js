@@ -22,6 +22,9 @@ function bindEventListeners() {
   document.getElementById('exportBtn').addEventListener('click', exportSettings);
   document.getElementById('importBtn').addEventListener('click', importSettings);
   document.getElementById('resetBtn').addEventListener('click', resetSettings);
+
+  // 新增功能按钮
+  document.getElementById('resetSelectedTextFeature').addEventListener('click', resetSelectedTextFeature);
   
   // AI服务商变更
   document.getElementById('aiProvider').addEventListener('change', updateAIProviderSettings);
@@ -175,7 +178,8 @@ async function loadSettings() {
     'aiSystemPrompt', 'promptTemplate', 'summaryLength',
     'enableSmartClassify', 'autoTags', 'domainTags', 'timeTags',
     'confidenceThreshold', 'showShortcutsInMenu', 'notifyShortcuts',
-    'offlineCache', 'includeTime', 'autoExtractKeywords'
+    'offlineCache', 'includeTime', 'autoExtractKeywords',
+    'popupPosition', 'enableSelectedTextFeature'
   ]);
   
   // 如果是首次使用，应用默认配置
@@ -224,6 +228,10 @@ async function loadSettings() {
   document.getElementById('offlineCache').checked = settings.offlineCache !== false;
   document.getElementById('includeTime').checked = settings.includeTime !== false;
   document.getElementById('autoExtractKeywords').checked = settings.autoExtractKeywords !== false;
+
+  // 界面设置
+  document.getElementById('popupPosition').value = settings.popupPosition || 'default';
+  document.getElementById('enableSelectedTextFeature').checked = settings.enableSelectedTextFeature !== false;
 
   // 更新AI服务商相关设置
   updateAIProviderSettings();
@@ -369,7 +377,11 @@ async function saveSettings() {
     
     offlineCache: document.getElementById('offlineCache').checked,
     includeTime: document.getElementById('includeTime').checked,
-    autoExtractKeywords: document.getElementById('autoExtractKeywords').checked
+    autoExtractKeywords: document.getElementById('autoExtractKeywords').checked,
+
+    // 界面设置
+    popupPosition: document.getElementById('popupPosition').value,
+    enableSelectedTextFeature: document.getElementById('enableSelectedTextFeature').checked
   };
   
   try {
@@ -607,6 +619,28 @@ async function testAIConnection() {
   } catch (error) {
     showStatus('❌ AI服务连接错误: ' + error.message, 'error');
     console.error('AI连接错误:', error);
+  }
+}
+
+// 重置选中文本功能
+async function resetSelectedTextFeature() {
+  console.log('开始重置选中文本功能');
+
+  try {
+    // 重置相关设置
+    await chrome.storage.sync.set({
+      enableSelectedTextFeature: true,
+      popupPosition: 'default'
+    });
+
+    // 重新加载设置
+    await loadSettings();
+
+    showStatus('✅ 选中文本功能已重置', 'success');
+    console.log('选中文本功能重置成功');
+  } catch (error) {
+    showStatus('❌ 重置失败：' + error.message, 'error');
+    console.error('选中文本功能重置失败:', error);
   }
 }
 

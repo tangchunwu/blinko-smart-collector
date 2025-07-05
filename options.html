@@ -507,6 +507,35 @@
     </div>
 
     <div class="section">
+      <h3>🎨 界面设置</h3>
+      <div class="form-group">
+        <label>弹窗位置</label>
+        <select id="popupPosition">
+          <option value="default">默认位置</option>
+          <option value="right">右侧显示</option>
+        </select>
+        <div class="help-text">选择扩展弹窗的显示位置</div>
+      </div>
+
+      <div class="form-group">
+        <label>选中文本功能</label>
+        <div class="checkbox-group">
+          <input type="checkbox" id="enableSelectedTextFeature" checked>
+          <label>启用选中文本AI总结功能</label>
+        </div>
+        <div class="help-text">关闭此选项可以禁用选中文本相关功能，提供回退机制</div>
+      </div>
+
+      <div class="form-group">
+        <label>功能重置</label>
+        <button type="button" id="resetSelectedTextFeature" class="btn btn-secondary">
+          重置选中文本功能
+        </button>
+        <div class="help-text">如果选中文本功能出现问题，可以点击此按钮重置</div>
+      </div>
+    </div>
+
+    <div class="section">
       <h3>⌨️ 快捷键配置</h3>
       <div class="shortcut-info">
         <strong>💡 快捷键使用提示：</strong><br>

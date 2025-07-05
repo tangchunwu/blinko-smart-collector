@@ -2,6 +2,8 @@
 let currentTab = null;
 let currentPageInfo = null;
 let currentTags = [];
+let selectedText = '';
+let selectedSummary = '';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // 获取当前页面信息
@@ -13,6 +15,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 绑定事件监听器
   bindEventListeners();
+
+  // 应用布局设置
+  await applyLayoutSettings();
 
   // 检查配置状态
   checkConfigurationStatus();
@@ -42,6 +47,10 @@ async function initializeInterface() {
 
       // 更新界面
       updateTagsDisplay();
+
+      // 检测选中文本
+      await checkSelectedText();
+
       showStatus('✅ 页面分析完成', 'success');
     } else {
       console.warn('页面信息提取失败');
@@ -56,6 +65,13 @@ async function initializeInterface() {
 function bindEventListeners() {
   // AI生成摘要按钮
   document.getElementById('aiGenerateBtn').addEventListener('click', generateAISummary);
+
+  // 选中内容相关按钮
+  document.getElementById('selectedAiGenerateBtn').addEventListener('click', generateSelectedTextSummary);
+  document.getElementById('clearSelectedBtn').addEventListener('click', clearSelectedContent);
+  document.getElementById('moveToSummaryBtn').addEventListener('click', () => moveSelectedSummary('summary'));
+  document.getElementById('moveToThoughtsBtn').addEventListener('click', () => moveSelectedSummary('thoughts'));
+  document.getElementById('editSummaryBtn').addEventListener('click', toggleSelectedSummaryEdit);
 
   // 提交按钮
   document.getElementById('submitBtn').addEventListener('click', submitToFlomo);
@@ -174,6 +190,181 @@ async function generateAISummary() {
     aiLoading.classList.add('hidden');
     aiGenerateText.textContent = 'AI总结';
     aiGenerateBtn.disabled = false;
+  }
+}
+
+// 应用布局设置
+async function applyLayoutSettings() {
+  try {
+    const settings = await chrome.storage.sync.get(['popupPosition']);
+    if (settings.popupPosition === 'right') {
+      document.body.classList.add('right-position');
+    }
+  } catch (error) {
+    console.error('应用布局设置失败:', error);
+  }
+}
+
+// 检测选中文本
+async function checkSelectedText() {
+  try {
+    // 检查功能是否启用
+    const settings = await chrome.storage.sync.get(['enableSelectedTextFeature']);
+    if (settings.enableSelectedTextFeature === false) {
+      document.getElementById('selectedContentSection').style.display = 'none';
+      return;
+    }
+
+    const [result] = await chrome.scripting.executeScript({
+      target: { tabId: currentTab.id },
+      function: () => window.getSelection().toString()
+    });
+
+    selectedText = result.result?.trim() || '';
+    console.log('检测到选中文本:', selectedText);
+
+    if (selectedText) {
+      // 显示选中内容区域
+      document.getElementById('selectedContentSection').style.display = 'block';
+      document.getElementById('selectedContent').value = selectedText;
+      document.getElementById('selectedContent').placeholder = '已检测到选中文本，可以进行AI总结';
+    } else {
+      // 隐藏选中内容区域
+      document.getElementById('selectedContentSection').style.display = 'none';
+    }
+  } catch (error) {
+    console.error('检测选中文本失败:', error);
+    document.getElementById('selectedContentSection').style.display = 'none';
+  }
+}
+
+// 生成选中文本AI总结
+async function generateSelectedTextSummary() {
+  const selectedAiGenerateBtn = document.getElementById('selectedAiGenerateBtn');
+  const selectedAiLoading = document.getElementById('selectedAiLoading');
+  const selectedAiGenerateText = document.getElementById('selectedAiGenerateText');
+  const selectedSummaryContainer = document.getElementById('selectedSummaryContainer');
+  const selectedSummaryContent = document.getElementById('selectedSummaryContent');
+
+  try {
+    // 获取当前选中的文本
+    const currentSelectedText = document.getElementById('selectedContent').value.trim();
+    if (!currentSelectedText) {
+      showStatus('❌ 没有选中文本可以总结', 'error');
+      return;
+    }
+
+    // 显示加载状态
+    selectedAiLoading.classList.remove('hidden');
+    selectedAiGenerateText.textContent = '生成中...';
+    selectedAiGenerateBtn.disabled = true;
+
+    showStatus('🤖 正在生成选中文本AI总结...', 'info');
+    console.log('开始生成选中文本AI总结，文本长度:', currentSelectedText.length);
+
+    // 调用background脚本生成摘要
+    console.log('发送消息到background脚本...');
+    const response = await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({
+        action: 'generateSelectedTextSummary',
+        selectedText: currentSelectedText,
+        tab: currentTab,
+        pageInfo: currentPageInfo
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('Chrome runtime错误:', chrome.runtime.lastError);
+          reject(new Error(chrome.runtime.lastError.message));
+        } else {
+          resolve(response);
+        }
+      });
+    });
+
+    console.log('选中文本AI总结响应:', response);
+
+    if (response && response.summary) {
+      selectedSummary = response.summary;
+      selectedSummaryContent.value = selectedSummary;
+      selectedSummaryContainer.style.display = 'block';
+      showStatus('✅ 选中文本AI总结生成完成', 'success');
+      console.log('选中文本AI总结生成成功');
+    } else if (response && response.error) {
+      throw new Error(response.error);
+    } else {
+      selectedSummaryContent.placeholder = '选中文本AI总结生成失败，您可以手动输入总结内容...';
+      showStatus('⚠️ 选中文本AI总结生成失败，请手动输入或检查AI配置', 'warning');
+      console.warn('选中文本AI总结响应无效:', response);
+    }
+  } catch (error) {
+    console.error('选中文本AI总结生成失败:', error);
+
+    // 根据错误类型提供不同的提示
+    let errorMessage = error.message;
+    if (error.message.includes('API密钥')) {
+      errorMessage = '请先配置AI服务。点击右上角设置按钮进行配置。';
+    } else if (error.message.includes('网络') || error.message.includes('超时')) {
+      errorMessage = '网络连接失败，请检查网络或稍后重试。';
+    }
+
+    selectedSummaryContent.placeholder = '您可以手动输入总结内容...';
+    showStatus('❌ ' + errorMessage, 'error');
+  } finally {
+    // 恢复按钮状态
+    selectedAiLoading.classList.add('hidden');
+    selectedAiGenerateText.textContent = 'AI总结';
+    selectedAiGenerateBtn.disabled = false;
+  }
+}
+
+// 清除选中内容
+function clearSelectedContent() {
+  selectedText = '';
+  selectedSummary = '';
+  document.getElementById('selectedContent').value = '';
+  document.getElementById('selectedSummaryContent').value = '';
+  document.getElementById('selectedSummaryContainer').style.display = 'none';
+  document.getElementById('selectedContentSection').style.display = 'none';
+  showStatus('✅ 已清除选中内容', 'success');
+}
+
+// 移动选中文本总结到其他区域
+function moveSelectedSummary(target) {
+  const summaryText = document.getElementById('selectedSummaryContent').value.trim();
+  if (!summaryText) {
+    showStatus('❌ 没有总结内容可以移动', 'error');
+    return;
+  }
+
+  if (target === 'summary') {
+    const summaryContent = document.getElementById('summaryContent');
+    const currentContent = summaryContent.value.trim();
+    summaryContent.value = currentContent ? currentContent + '\n\n' + summaryText : summaryText;
+    showStatus('✅ 总结已移动到原文摘要区域', 'success');
+  } else if (target === 'thoughts') {
+    const thoughtsContent = document.getElementById('thoughtsContent');
+    const currentContent = thoughtsContent.value.trim();
+    thoughtsContent.value = currentContent ? currentContent + '\n\n' + summaryText : summaryText;
+    showStatus('✅ 总结已移动到个人想法区域', 'success');
+  }
+}
+
+// 切换选中文本总结的编辑状态
+function toggleSelectedSummaryEdit() {
+  const selectedSummaryContent = document.getElementById('selectedSummaryContent');
+  const editBtn = document.getElementById('editSummaryBtn');
+
+  if (selectedSummaryContent.readOnly) {
+    selectedSummaryContent.readOnly = false;
+    selectedSummaryContent.focus();
+    editBtn.textContent = '💾';
+    editBtn.title = '保存编辑';
+    showStatus('📝 现在可以编辑总结内容', 'info');
+  } else {
+    selectedSummaryContent.readOnly = true;
+    editBtn.textContent = '✏️';
+    editBtn.title = '编辑总结';
+    selectedSummary = selectedSummaryContent.value;
+    showStatus('✅ 总结编辑已保存', 'success');
   }
 }
 

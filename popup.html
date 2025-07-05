@@ -20,6 +20,18 @@
       flex-direction: column;
     }
 
+    /* 右侧显示样式 */
+    body.right-position .container {
+      position: fixed;
+      right: 20px;
+      top: 50px;
+      width: 400px;
+      max-height: 600px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      z-index: 10000;
+    }
+
     /* 头部样式 */
     .header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -141,6 +153,103 @@
     .summary-placeholder {
       color: #adb5bd;
       font-style: italic;
+    }
+
+    /* 选中内容区域 */
+    .selected-content-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e1e8ed;
+      background: linear-gradient(135deg, #fff8e1, #fff3c4);
+    }
+    .selected-content-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .selected-content {
+      background: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 80px;
+      max-height: 150px;
+      font-family: inherit;
+    }
+    .selected-content:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .selected-summary-container {
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      background: white;
+      overflow: hidden;
+    }
+    .selected-summary-header {
+      background: #f8f9fa;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e1e8ed;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: #495057;
+    }
+    .summary-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .selected-summary-content {
+      border: none;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 100px;
+      max-height: 200px;
+      font-family: inherit;
+      background: white;
+    }
+    .selected-summary-content:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.1);
+    }
+    .section-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .action-btn {
+      background: #f8f9fa;
+      border: 1px solid #e1e8ed;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #495057;
+    }
+    .action-btn:hover {
+      background: #e9ecef;
+      border-color: #adb5bd;
+    }
+    .action-btn.small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .action-btn.mini {
+      padding: 2px 6px;
+      font-size: 11px;
+      min-width: 24px;
+    }
+    .ai-generate-btn.small {
+      padding: 6px 12px;
+      font-size: 12px;
     }
 
     /* 个人想法区域 */
@@ -300,6 +409,49 @@
       </div>
       <div id="pageTitle" class="page-title-display">加载中...</div>
       <div id="pageUrl" class="page-url-display"></div>
+    </div>
+
+    <!-- 选中内容区域 -->
+    <div class="selected-content-section" id="selectedContentSection" style="display: none;">
+      <div class="section-header">
+        <div class="section-title">
+          <span>✂️</span>
+          <span>选中内容</span>
+        </div>
+        <div class="section-actions">
+          <button class="ai-generate-btn small" id="selectedAiGenerateBtn">
+            <span class="loading hidden" id="selectedAiLoading"></span>
+            <span id="selectedAiGenerateText">AI总结</span>
+          </button>
+          <button class="action-btn small" id="clearSelectedBtn" title="清除选中内容">✕</button>
+        </div>
+      </div>
+      <div class="selected-content-container">
+        <textarea
+          id="selectedContent"
+          class="selected-content"
+          placeholder="当前页面没有选中文本..."
+          rows="4"
+          readonly
+        ></textarea>
+        <div class="selected-summary-container" id="selectedSummaryContainer" style="display: none;">
+          <div class="selected-summary-header">
+            <span>🤖 AI总结结果</span>
+            <div class="summary-actions">
+              <button class="action-btn mini" id="moveToSummaryBtn" title="移动到原文摘要">📄</button>
+              <button class="action-btn mini" id="moveToThoughtsBtn" title="移动到个人想法">💭</button>
+              <button class="action-btn mini" id="editSummaryBtn" title="编辑总结">✏️</button>
+            </div>
+          </div>
+          <textarea
+            id="selectedSummaryContent"
+            class="selected-summary-content"
+            placeholder="AI总结将显示在这里..."
+            rows="5"
+            readonly
+          ></textarea>
+        </div>
+      </div>
     </div>
 
     <!-- 原文摘要区域 -->
