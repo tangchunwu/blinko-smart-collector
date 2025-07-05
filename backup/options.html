@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Blinko智能收集器 - 配置</title>
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px; 
+      margin: 50px auto; 
+      padding: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #2c3e50;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      color: #2c3e50;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .section { 
+      margin: 30px 0; 
+      padding: 25px; 
+      border: 2px solid #e1e8ed; 
+      border-radius: 15px;
+      background: white;
+      transition: all 0.3s ease;
+    }
+    .section:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+    }
+    .section h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+    }
+    .form-group { 
+      margin: 20px 0; 
+    }
+    label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 600;
+      color: #34495e;
+    }
+    input[type="text"], 
+    input[type="url"], 
+    input[type="password"],
+    input[type="number"],
+    textarea, 
+    select { 
+      width: 100%; 
+      padding: 12px 15px; 
+      border: 2px solid #e1e8ed; 
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: white;
+      box-sizing: border-box;
+    }
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    input[type="password"]:focus,
+    input[type="number"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-1px);
+    }
+    .btn { 
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white; 
+      border: none; 
+      padding: 12px 25px; 
+      border-radius: 10px; 
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 10px 5px;
+      transition: all 0.3s ease;
+    }
+    .btn:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    }
+    .btn-secondary {
+      background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+    }
+    .btn-danger {
+      background: linear-gradient(45deg, #e74c3c, #c0392b);
+    }
+    .status { 
+      padding: 15px 20px; 
+      margin: 20px 0; 
+      border-radius: 10px;
+      font-weight: 500;
+      text-align: center;
+    }
+    .success { 
+      background: #d4edda; 
+      color: #155724; 
+      border: 1px solid #c3e6cb;
+    }
+    .error { 
+      background: #f8d7da; 
+      color: #721c24; 
+      border: 1px solid #f5c6cb;
+    }
+    .warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin-right: 10px;
+    }
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .slider-group input[type="range"] {
+      flex: 1;
+    }
+    .slider-value {
+      font-weight: bold;
+      color: #667eea;
+      min-width: 50px;
+    }
+    .help-text {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+      font-style: italic;
+    }
+    .shortcut-info {
+      background: #e8f4fd;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      border-left: 4px solid #3498db;
+    }
+    .shortcut-info strong {
+      color: #2980b9;
+    }
+    .pre-configured {
+      background: #d1ecf1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border-left: 4px solid #17a2b8;
+    }
+    .pre-configured strong {
+      color: #0c5460;
+    }
+    .debug-info {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border-left: 4px solid #6c757d;
+      font-family: monospace;
+      font-size: 12px;
+      color: #495057;
+    }
+    .advanced-section {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      border-left: 4px solid #6c757d;
+    }
+    .advanced-section h4 {
+      color: #495057;
+      margin-bottom: 15px;
+      font-size: 1.1em;
+    }
+    .form-row {
+      display: flex;
+      gap: 15px;
+      align-items: end;
+    }
+    .form-row .form-group {
+      flex: 1;
+      margin: 0;
+    }
+    .collapsible {
+      cursor: pointer;
+      user-select: none;
+      padding: 10px;
+      background: #f1f3f4;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .collapsible:hover {
+      background: #e8eaed;
+      color: #667eea;
+    }
+    .collapsible-content {
+      display: none;
+      padding: 15px;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      background: #fafbfc;
+    }
+    .collapsible-content.expanded {
+      display: block;
+      animation: fadeIn 0.3s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toggle-icon {
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+    .toggle-icon.rotated {
+      transform: rotate(180deg);
+    }
+    .token-format-info {
+      background: #e3f2fd;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border-left: 4px solid #2196f3;
+      font-size: 13px;
+    }
+    .api-fix-notice {
+      background: #d4edda;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border-left: 4px solid #28a745;
+    }
+    .api-fix-notice strong {
+      color: #155724;
+    }
+    .siliconflow-info {
+      background: #e8f5e8;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border-left: 4px solid #4caf50;
+      font-size: 13px;
+    }
+    .siliconflow-info strong {
+      color: #2e7d32;
+    }
+    .custom-model-group {
+      margin-top: 15px;
+      padding: 15px;
+      background: #fff3e0;
+      border-radius: 8px;
+      border-left: 4px solid #ff9800;
+    }
+    .custom-model-group label {
+      color: #e65100;
+      font-weight: 600;
+    }
+    .custom-model-group input {
+      border-color: #ffcc02;
+    }
+    .custom-model-group input:focus {
+      border-color: #ff9800;
+      box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 Blinko智能收集器</h1>
+      <p>配置你的智能收集参数，让扩展更好地为你服务</p>
+    </div>
+    
+    <div class="section">
+      <h3>📝 Blinko API 配置</h3>
+      <div class="pre-configured">
+        <strong>✅ 已预配置 CCNU Blinko 服务</strong><br>
+        默认使用 ccnu.me 的 Blinko 服务，如需使用其他服务请修改下方配置。
+      </div>
+      <div class="form-group">
+        <label>API地址</label>
+        <input type="url" id="blinkoUrl" placeholder="https://ccnu.me/api/v1/note/upsert">
+        <div class="api-fix-notice">
+          <strong>🔧 智能修正：</strong><br>
+          系统会自动检测并修正API地址格式（单数/复数形式），确保连接成功。
+        </div>
+        <div class="help-text">你的Blinko服务API地址</div>
+      </div>
+      <div class="form-group">
+        <label>Authorization Token</label>
+        <input type="password" id="blinkoToken" placeholder="请输入你的Blinko Token">
+        <div class="token-format-info">
+          <strong>💡 Token格式说明：</strong><br>
+          • 可以直接粘贴从Blinko设置中复制的Token<br>
+          • 系统会自动处理Bearer前缀<br>
+          • 测试时会自动尝试多种格式和API地址变体
+        </div>
+        <div class="help-text">在Blinko设置中获取的API Token</div>
+      </div>
+      <button class="btn" id="testBlinkoBtn">🔍 测试Blinko连接</button>
+      
+      <div class="debug-info">
+        <strong>🔍 智能诊断：</strong><br>
+        测试时会自动尝试不同的API地址格式和Token格式组合，并在控制台输出详细信息。
+        如果遇到问题请按F12查看控制台获取详细的排查建议。
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>🤖 AI总结服务配置</h3>
+      <div class="form-group">
+        <label>AI服务商</label>
+        <select id="aiProvider">
+          <option value="openai">OpenAI (GPT系列)</option>
+          <option value="claude">Claude (Anthropic)</option>
+          <option value="deepseek">DeepSeek</option>
+          <option value="qwen">通义千问</option>
+          <option value="siliconflow">硅基流动 (SiliconFlow)</option>
+          <option value="custom">自定义兼容服务</option>
+        </select>
+        <div class="siliconflow-info" style="display: none;" id="siliconflowInfo">
+          <strong>🌟 硅基流动服务：</strong><br>
+          • 国内访问速度快，支持多种开源模型<br>
+          • 提供 Qwen、DeepSeek、GLM、Llama 等模型<br>
+          • 兼容 OpenAI API 格式，价格优惠
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>API密钥</label>
+        <input type="password" id="aiApiKey" placeholder="sk-...">
+        <div class="help-text">AI服务的API密钥</div>
+      </div>
+      
+      <div class="form-group">
+        <label>API基础地址</label>
+        <input type="url" id="aiBaseUrl" placeholder="https://api.openai.com/v1">
+        <div class="help-text">API服务地址，支持代理和第三方兼容服务</div>
+      </div>
+
+      <div class="form-group">
+        <label>模型名称</label>
+        <select id="aiModel">
+          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+          <option value="gpt-4">GPT-4</option>
+          <option value="gpt-4-turbo">GPT-4 Turbo</option>
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-4o-mini">GPT-4o Mini</option>
+        </select>
+        <div class="help-text">选择要使用的AI模型</div>
+      </div>
+
+      <!-- 自定义模型输入框 -->
+      <div class="form-group custom-model-group" id="customModelGroup" style="display: none;">
+        <label>自定义模型名称</label>
+        <input type="text" id="aiCustomModel" placeholder="例如：gpt-4、claude-3-sonnet、Qwen/Qwen2.5-72B-Instruct">
+        <div class="help-text">请输入完整的模型名称，如 Qwen/Qwen2.5-72B-Instruct</div>
+      </div>
+
+      <!-- 高级AI参数配置 -->
+      <div class="advanced-section">
+        <div class="collapsible" id="advancedToggle">
+          <span>🔧 高级参数配置</span>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="collapsible-content" id="advancedContent">
+          <div class="form-row">
+            <div class="form-group">
+              <label>温度 (Temperature)</label>
+              <div class="slider-group">
+                <input type="range" id="aiTemperature" min="0" max="2" step="0.1" value="0.7">
+                <span class="slider-value" id="temperatureValue">0.7</span>
+              </div>
+              <div class="help-text">控制输出的随机性，0-2之间</div>
+            </div>
+            <div class="form-group">
+              <label>最大Token数</label>
+              <input type="number" id="aiMaxTokens" value="1000" min="100" max="4000" step="100">
+              <div class="help-text">限制AI回复的最大长度</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Top P</label>
+              <div class="slider-group">
+                <input type="range" id="aiTopP" min="0" max="1" step="0.05" value="1">
+                <span class="slider-value" id="topPValue">1.0</span>
+              </div>
+              <div class="help-text">核采样参数，控制词汇选择范围</div>
+            </div>
+            <div class="form-group">
+              <label>请求超时 (秒)</label>
+              <input type="number" id="aiTimeout" value="30" min="10" max="120" step="5">
+              <div class="help-text">API请求超时时间</div>
+            </div>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="aiStreamMode">
+            <label>启用流式输出 (实验性)</label>
+          </div>
+          <div class="help-text">流式输出可以更快看到结果，但可能不稳定</div>
+        </div>
+      </div>
+
+      <!-- 自定义提示词配置 -->
+      <div class="advanced-section">
+        <div class="collapsible" id="promptToggle">
+          <span>📝 自定义提示词</span>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="collapsible-content" id="promptContent">
+          <div class="form-group">
+            <label>系统提示词模板</label>
+            <select id="promptTemplate">
+              <option value="default">默认通用模板</option>
+              <option value="technical">技术文档专用</option>
+              <option value="academic">学术论文专用</option>
+              <option value="news">新闻资讯专用</option>
+              <option value="custom">自定义模板</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>系统提示词</label>
+            <textarea id="aiSystemPrompt" rows="4" placeholder="你是一个专业的文章总结助手...">你是一个专业的文章总结助手。请用中文总结文章的核心要点，包括：1）主要观点；2）关键信息；3）实用建议。保持简洁明了，突出价值。</textarea>
+            <div class="help-text">定义AI的角色和总结风格</div>
+          </div>
+
+          <div class="form-group">
+            <label>总结长度偏好</label>
+            <select id="summaryLength">
+              <option value="short">简短 (200字以内)</option>
+              <option value="medium">中等 (500字以内)</option>
+              <option value="long">详细 (1000字以内)</option>
+              <option value="adaptive">自适应长度</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" id="testAIBtn">🔍 测试AI连接</button>
+    </div>
+
+    <div class="section">
+      <h3>🧠 智能分类配置</h3>
+      <div class="checkbox-group">
+        <input type="checkbox" id="enableSmartClassify" checked>
+        <label>启用智能分类</label>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="autoTags" checked>
+        <label>自动添加分类标签</label>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="domainTags" checked>
+        <label>添加域名标签</label>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="timeTags" checked>
+        <label>添加时间标签</label>
+      </div>
+      <div class="form-group">
+        <label>分类置信度阈值</label>
+        <div class="slider-group">
+          <input type="range" id="confidenceThreshold" min="10" max="90" value="30" step="10">
+          <span class="slider-value" id="confidenceValue">30%</span>
+        </div>
+        <div class="help-text">只有置信度超过此阈值的分类才会被应用</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>🎨 界面设置</h3>
+      <div class="form-group">
+        <label>弹窗位置</label>
+        <select id="popupPosition">
+          <option value="default">默认位置</option>
+          <option value="right">右侧显示</option>
+        </select>
+        <div class="help-text">选择扩展弹窗的显示位置</div>
+      </div>
+
+      <div class="form-group">
+        <label>选中文本功能</label>
+        <div class="checkbox-group">
+          <input type="checkbox" id="enableSelectedTextFeature" checked>
+          <label>启用选中文本AI总结功能</label>
+        </div>
+        <div class="help-text">关闭此选项可以禁用选中文本相关功能，提供回退机制</div>
+      </div>
+
+      <div class="form-group">
+        <label>功能重置</label>
+        <button type="button" id="resetSelectedTextFeature" class="btn btn-secondary">
+          重置选中文本功能
+        </button>
+        <div class="help-text">如果选中文本功能出现问题，可以点击此按钮重置</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>⌨️ 快捷键配置</h3>
+      <div class="shortcut-info">
+        <strong>💡 快捷键使用提示：</strong><br>
+        扩展安装后，可在 Chrome 的 <code>chrome://extensions/shortcuts</code> 页面自定义快捷键组合。
+        <br><br>
+        <strong>默认快捷键：</strong><br>
+        • <code>Ctrl+Shift+S</code> - 快速收集当前页面<br>
+        • <code>Ctrl+Shift+A</code> - AI总结当前文章<br>
+        • <code>Ctrl+Shift+C</code> - 收集选中文本<br>
+        • <code>Ctrl+Shift+O</code> - 打开配置页面<br>
+        <small>Mac用户请使用 Command 代替 Ctrl</small>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="showShortcutsInMenu" checked>
+        <label>在右键菜单中显示快捷键提示</label>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="notifyShortcuts" checked>
+        <label>快捷键执行时显示页面通知</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>⚙️ 其他设置</h3>
+      <div class="checkbox-group">
+        <input type="checkbox" id="offlineCache" checked>
+        <label>启用离线缓存</label>
+      </div>
+      <div class="help-text">网络不稳定时自动缓存内容，恢复后批量同步</div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="includeTime" checked>
+        <label>在内容中包含收集时间</label>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="autoExtractKeywords" checked>
+        <label>自动提取关键词</label>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <button class="btn" id="saveBtn">💾 保存所有配置</button>
+      <button class="btn btn-secondary" id="exportBtn">📤 导出配置</button>
+      <button class="btn btn-secondary" id="importBtn">📥 导入配置</button>
+      <button class="btn btn-danger" id="resetBtn">🔄 重置配置</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script>
+    // 动态显示硅基流动信息
+    document.getElementById('aiProvider').addEventListener('change', function() {
+      const siliconflowInfo = document.getElementById('siliconflowInfo');
+      if (this.value === 'siliconflow') {
+        siliconflowInfo.style.display = 'block';
+      } else {
+        siliconflowInfo.style.display = 'none';
+      }
+    });
+  </script>
+  <script src="options.js"></script>
+</body>
+</html>

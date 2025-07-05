@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="这是一个测试页面，用于验证善思 Blinko 智能收集器的功能">
+    <meta name="keywords" content="测试,AI,智能收集,笔记,知识管理">
+    <meta name="author" content="善思团队">
+    <title>善思 Blinko 测试页面 - AI智能笔记收集工具</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .code-block {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 善思 Blinko 智能收集器</h1>
+        <p>AI驱动的智能笔记收集工具测试页面</p>
+    </div>
+
+    <article class="content">
+        <h2>关于善思 Blinko</h2>
+        <p>善思 Blinko 是一款基于人工智能的智能笔记收集工具，旨在帮助用户高效地收集、整理和管理网络上的知识内容。通过先进的AI技术，它能够自动识别页面内容、生成智能摘要、分类标签，让知识管理变得更加简单高效。</p>
+
+        <div class="highlight">
+            <strong>💡 测试提示：</strong> 请尝试使用扩展的各项功能来收集这个页面的内容，体验AI智能摘要和个人想法记录功能。
+        </div>
+
+        <h3>核心功能特点</h3>
+        <div class="feature-list">
+            <div class="feature-card">
+                <h4>🔗 智能链接识别</h4>
+                <p>自动识别和提取页面标题、URL等关键信息，无需手动输入。</p>
+            </div>
+            <div class="feature-card">
+                <h4>🤖 AI智能摘要</h4>
+                <p>利用先进的AI模型自动生成文章摘要，提取核心要点和关键信息。</p>
+            </div>
+            <div class="feature-card">
+                <h4>💭 个人想法记录</h4>
+                <p>提供专门的区域记录个人思考和见解，与AI摘要分离管理。</p>
+            </div>
+            <div class="feature-card">
+                <h4>🏷️ 智能标签系统</h4>
+                <p>自动生成相关标签，支持手动编辑和删除，便于后续检索。</p>
+            </div>
+        </div>
+
+        <h3>技术实现</h3>
+        <p>善思 Blinko 采用了现代化的技术栈：</p>
+        <ul>
+            <li><strong>前端技术：</strong>Chrome Extension API、现代化CSS、响应式设计</li>
+            <li><strong>AI集成：</strong>支持OpenAI、Claude、DeepSeek等多种AI模型</li>
+            <li><strong>智能分类：</strong>基于域名和内容的智能分类算法</li>
+            <li><strong>数据存储：</strong>与Blinko笔记系统无缝集成</li>
+        </ul>
+
+        <div class="code-block">
+// 示例：AI摘要生成流程
+async function generateAISummary(content) {
+  const response = await fetch('/api/ai/summary', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content })
+  });
+  return await response.json();
+}
+        </div>
+
+        <h3>使用场景</h3>
+        <p>善思 Blinko 适用于以下场景：</p>
+        <ol>
+            <li><strong>学术研究：</strong>收集和整理学术论文、研究资料</li>
+            <li><strong>技术学习：</strong>保存技术文档、教程和代码示例</li>
+            <li><strong>新闻资讯：</strong>快速收集和摘要新闻内容</li>
+            <li><strong>个人知识管理：</strong>构建个人知识库和学习笔记</li>
+            <li><strong>团队协作：</strong>分享和同步团队知识资源</li>
+        </ol>
+
+        <div class="highlight">
+            <strong>🎯 测试建议：</strong>
+            <br>1. 点击扩展图标打开收集界面
+            <br>2. 尝试生成AI摘要功能
+            <br>3. 在个人想法区域添加你的思考
+            <br>4. 编辑和管理智能标签
+            <br>5. 提交内容到Blinko系统
+        </div>
+
+        <h3>未来发展</h3>
+        <p>我们计划在未来版本中加入更多功能：</p>
+        <ul>
+            <li>多语言支持和翻译功能</li>
+            <li>图片和视频内容识别</li>
+            <li>协作笔记和分享功能</li>
+            <li>高级搜索和知识图谱</li>
+            <li>移动端应用支持</li>
+        </ul>
+    </article>
+
+    <div class="content">
+        <h2>测试说明</h2>
+        <p>这个页面专门用于测试善思 Blinko 扩展的各项功能。页面包含了丰富的内容结构，包括标题、段落、列表、代码块等，可以很好地测试AI摘要生成和内容提取功能。</p>
+        
+        <p>请尝试选择页面中的文本内容，使用右键菜单或快捷键来体验划词收集功能。同时，也可以测试整页收集和AI智能分析功能。</p>
+    </div>
+</body>
+</html>

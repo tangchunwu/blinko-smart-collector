@@ -72,20 +72,21 @@ chrome.runtime.onInstalled.addListener(() => {
 // 处理快捷键命令
 chrome.commands.onCommand.addListener(async (command) => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
+  
   switch (command) {
+    case 'quick-collect':
+      await saveCurrentPage(tab);
+      break;
+    case 'ai-summary':
+      await aiSummaryArticle(tab);
+      break;
+    case 'collect-selection':
+      await collectSelectedText(null, tab);
+      break;
     case 'open-config':
       chrome.runtime.openOptionsPage();
       break;
-    case 'toggle-sidebar':
-      await toggleSidePanel(tab);
-      break;
   }
-});
-
-// 处理扩展图标点击
-chrome.action.onClicked.addListener(async (tab) => {
-  await openSidePanel(tab);
 });
 
 // 处理右键菜单点击
@@ -125,36 +126,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           await smartAnalyzeAndCollect(message.tab);
           sendResponse({ success: true });
           break;
-        case 'generateAISummary':
-          try {
-            console.log('Background开始生成AI摘要...', message.isSelection ? '(选中文本)' : '(全文)');
-
-            // 根据isSelection参数决定处理方式
-            let result;
-            if (message.isSelection) {
-              // 选中文本总结
-              result = await generateSelectedTextSummary(message.content, message, {
-                title: message.title,
-                url: message.url
-              });
-            } else {
-              // 全文总结
-              result = await generateAISummaryFromContent(message.content, message.title, message.url);
-            }
-
-            console.log('Background AI摘要生成完成，长度:', result?.summary?.length);
-            sendResponse({
-              success: true,
-              summary: result.summary,
-              tags: result.tags,
-              type: result.type,
-              keywords: result.keywords
-            });
-          } catch (error) {
-            console.error('Background AI摘要生成失败:', error);
-            sendResponse({ success: false, error: error.message });
-          }
-          break;
         case 'generateAISummaryOnly':
           try {
             console.log('Background开始生成AI摘要...');
@@ -169,18 +140,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         case 'generateSelectedTextSummary':
           try {
             console.log('Background开始生成选中文本AI总结...');
-            const result = await generateSelectedTextSummary(message.selectedText, message.tab, message.pageInfo);
-            console.log('Background选中文本AI总结生成完成，长度:', result?.summary?.length);
-            sendResponse({
-              success: true,
-              summary: result.summary,
-              tags: result.tags,
-              type: result.type,
-              keywords: result.keywords
-            });
+            const summary = await generateSelectedTextSummary(message.selectedText, message.tab, message.pageInfo);
+            console.log('Background选中文本AI总结生成完成，长度:', summary?.length);
+            sendResponse({ summary: summary });
           } catch (error) {
             console.error('Background选中文本AI总结生成失败:', error);
-            sendResponse({ success: false, error: error.message });
+            sendResponse({ error: error.message });
           }
           break;
         case 'classifyContent':
@@ -190,58 +155,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         case 'saveToBlinko':
           await saveToBlinko(message.content);
           sendResponse({ success: true });
-          break;
-        case 'submitToFlomo':
-          // 处理从sidepanel提交的数据到Blinko
-          try {
-            console.log('Background收到submitToFlomo请求:', message.data);
-            const formattedContent = await formatSidePanelDataForBlinko(message.data);
-            await saveToBlinko(formattedContent);
-            sendResponse({ success: true });
-          } catch (error) {
-            console.error('Background submitToFlomo失败:', error);
-            sendResponse({ success: false, error: error.message });
-          }
-          break;
-        case 'selectedTextChanged':
-          // 处理选中文本变化
-          try {
-            console.log('Background收到选中文本变化:', message.text ? `"${message.text.substring(0, 50)}..."` : '无选中');
-
-            // 获取当前活动标签页
-            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-            // 保存选中文本到storage，供sidepanel使用
-            await chrome.storage.local.set({
-              currentSelectedText: message.text,
-              selectedTextTabId: tab?.id,
-              selectedTextTimestamp: message.timestamp || Date.now()
-            });
-
-            console.log('选中文本已保存到storage');
-          } catch (error) {
-            console.error('处理选中文本变化失败:', error);
-          }
-          break;
-        case 'testBlinkoConnection':
-          try {
-            console.log('测试Blinko连接...');
-            await testBlinkoConnection();
-            sendResponse({ success: true, message: 'Blinko连接测试成功' });
-          } catch (error) {
-            console.error('Blinko连接测试失败:', error);
-            sendResponse({ success: false, error: error.message });
-          }
-          break;
-        case 'testAIConnection':
-          try {
-            console.log('测试AI连接...');
-            const result = await testAIConnection();
-            sendResponse({ success: true, message: 'AI连接测试成功', result: result });
-          } catch (error) {
-            console.error('AI连接测试失败:', error);
-            sendResponse({ success: false, error: error.message });
-          }
           break;
         default:
           sendResponse({ error: 'Unknown action: ' + message.action });
@@ -369,30 +282,12 @@ function extractPageDetails() {
 // 智能分类内容
 async function classifyContent(pageInfo, url) {
   const domain = new URL(url).hostname;
-
-  // 处理不同类型的输入
-  let title = '';
-  let description = '';
-  let extractedKeywords = [];
-
-  if (typeof pageInfo === 'string') {
-    // 如果pageInfo是字符串，说明是从sidepanel传来的内容
-    description = pageInfo;
-    title = '';
-    extractedKeywords = [];
-  } else if (pageInfo && typeof pageInfo === 'object') {
-    // 如果pageInfo是对象，使用其属性
-    title = pageInfo.title || '';
-    description = pageInfo.description || '';
-    extractedKeywords = pageInfo.extractedKeywords || [];
-  }
-
-  const allText = (title + ' ' + description + ' ' + extractedKeywords.join(' ')).toLowerCase();
+  const allText = (pageInfo.title + ' ' + pageInfo.description + ' ' + pageInfo.extractedKeywords.join(' ')).toLowerCase();
   
   let classification = {
     type: '未分类',
     tags: ['#网页收集'],
-    keywords: extractedKeywords.slice(0, 5),
+    keywords: pageInfo.extractedKeywords.slice(0, 5),
     confidence: 0
   };
   
@@ -415,7 +310,7 @@ async function classifyContent(pageInfo, url) {
       classification = {
         type: categoryName,
         tags: [...rules.tags, '#网页收集'],
-        keywords: [...new Set([...matchingKeywords, ...extractedKeywords])].slice(0, 5),
+        keywords: [...new Set([...matchingKeywords, ...pageInfo.extractedKeywords])].slice(0, 5),
         confidence: score
       };
     }
@@ -762,47 +657,6 @@ async function saveToBlinko(content) {
   }
 }
 
-// 从内容生成AI摘要（用于sidepanel）
-async function generateAISummaryFromContent(content, title, url) {
-  try {
-    console.log('从内容生成AI摘要，内容长度:', content?.length, '标题:', title);
-
-    if (!content || content.trim().length === 0) {
-      throw new Error('页面内容为空，无法生成摘要');
-    }
-
-    // 检查AI配置
-    const settings = await chrome.storage.sync.get(['aiApiKey', 'aiProvider', 'aiBaseUrl']);
-    console.log('AI配置检查:', {
-      hasApiKey: !!settings.aiApiKey,
-      provider: settings.aiProvider,
-      baseUrl: settings.aiBaseUrl
-    });
-
-    if (!settings.aiApiKey) {
-      throw new Error('请先在配置页面设置AI API密钥');
-    }
-
-    // 使用现有的generateAISummary函数，但需要先进行内容分类
-    const classification = await classifyContent(content, url);
-    console.log('内容分类完成:', classification);
-
-    const summary = await generateAISummary(content, title, url, classification);
-    console.log('AI摘要生成完成，长度:', summary?.length);
-
-    // 返回摘要和标签信息
-    return {
-      summary: summary,
-      tags: classification.tags || [],
-      type: classification.type || '未分类',
-      keywords: classification.keywords || []
-    };
-  } catch (error) {
-    console.error('从内容生成AI摘要失败:', error);
-    throw error;
-  }
-}
-
 // 仅生成AI摘要（不保存）
 async function generateAISummaryOnly(tab, pageInfo) {
   try {
@@ -1073,16 +927,7 @@ async function generateSelectedTextSummary(selectedText, tab, pageInfo) {
 
       const summary = data.choices[0].message.content;
       console.log('选中文本AI总结生成成功，长度:', summary?.length);
-
-      // 为选中文本生成简单的标签
-      const classification = await classifyContent(selectedText, tab?.url || '');
-
-      return {
-        summary: summary,
-        tags: classification.tags || ['#选中文本', '#AI总结'],
-        type: classification.type || '文本摘录',
-        keywords: classification.keywords || []
-      };
+      return summary;
 
     } catch (error) {
       clearTimeout(timeoutId);
@@ -1095,178 +940,6 @@ async function generateSelectedTextSummary(selectedText, tab, pageInfo) {
     console.error('选中文本AI总结生成失败:', error);
     throw error;
   }
-}
-
-// 格式化sidepanel数据为Blinko格式
-async function formatSidePanelDataForBlinko(data) {
-  console.log('格式化sidepanel数据:', data);
-
-  let content = '';
-
-  // 添加标题和链接
-  if (data.title) {
-    content += `📌 **${data.title}**\n\n`;
-  }
-
-  // 添加选中内容
-  if (data.selectedText) {
-    content += `✂️ **选中内容：**\n"${data.selectedText}"\n\n`;
-  }
-
-  // 添加选中内容的AI总结
-  if (data.selectedSummary) {
-    content += `🤖 **选中内容AI总结：**\n${data.selectedSummary}\n\n`;
-  }
-
-  // 添加原文摘要
-  if (data.summary) {
-    content += `📄 **原文摘要：**\n${data.summary}\n\n`;
-  }
-
-  // 添加个人想法
-  if (data.thoughts) {
-    content += `💭 **个人想法：**\n${data.thoughts}\n\n`;
-  }
-
-  // 添加标签
-  if (data.tags && data.tags.length > 0) {
-    content += `🏷️ **标签：** ${data.tags.map(tag => '#' + tag).join(' ')}\n\n`;
-  }
-
-  // 添加链接和时间
-  if (data.url) {
-    content += `🔗 **链接：** ${data.url}\n`;
-  }
-  content += `📅 **收集时间：** ${new Date().toLocaleString()}\n\n`;
-
-  // 添加默认标签
-  content += '#网页收集 #侧边栏收集';
-  if (data.tags && data.tags.length > 0) {
-    content += ' ' + data.tags.map(tag => '#' + tag).join(' ');
-  }
-
-  console.log('格式化后的内容长度:', content.length);
-  return content;
-}
-
-// 打开Side Panel
-async function openSidePanel(tab) {
-  try {
-    await chrome.sidePanel.open({ tabId: tab.id });
-    console.log('Side Panel已打开');
-  } catch (error) {
-    console.error('打开Side Panel失败:', error);
-  }
-}
-
-// 切换Side Panel显示
-async function toggleSidePanel(tab) {
-  try {
-    // Chrome Side Panel API没有直接的toggle方法
-    // 我们通过检查当前状态来决定操作
-    await chrome.sidePanel.open({ tabId: tab.id });
-    console.log('Side Panel已打开');
-  } catch (error) {
-    console.error('切换Side Panel失败:', error);
-  }
-}
-
-// 测试Blinko连接
-async function testBlinkoConnection() {
-  const settings = await chrome.storage.sync.get(['blinkoUrl', 'blinkoToken']);
-
-  if (!settings.blinkoUrl || !settings.blinkoToken) {
-    throw new Error('请先配置Blinko API地址和Token');
-  }
-
-  console.log('测试Blinko连接，URL:', settings.blinkoUrl);
-
-  // 发送测试内容
-  const testContent = `🧪 **Blinko连接测试**\n\n这是一条测试消息，用于验证Blinko API连接是否正常。\n\n📅 **测试时间：** ${new Date().toLocaleString()}\n\n#连接测试`;
-
-  const response = await fetch(settings.blinkoUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${settings.blinkoToken}`
-    },
-    body: JSON.stringify({
-      content: testContent,
-      type: 0
-    })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Blinko API调用失败: ${response.status} - ${errorText}`);
-  }
-
-  console.log('Blinko连接测试成功');
-  return { status: response.status, message: 'Blinko连接正常' };
-}
-
-// 测试AI连接
-async function testAIConnection() {
-  const settings = await chrome.storage.sync.get([
-    'aiApiKey', 'aiProvider', 'aiBaseUrl', 'aiModel', 'aiCustomModel'
-  ]);
-
-  if (!settings.aiApiKey) {
-    throw new Error('请先配置AI API密钥');
-  }
-
-  const baseUrl = settings.aiBaseUrl || 'https://api.openai.com/v1';
-  const model = await getActualModelName(settings);
-
-  console.log('测试AI连接，URL:', baseUrl, 'Model:', model);
-
-  const endpoint = baseUrl.endsWith('/') ? baseUrl + 'chat/completions' : baseUrl + '/chat/completions';
-
-  // 发送简单的测试请求
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${settings.aiApiKey}`
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [
-        { role: 'user', content: '请回复"连接测试成功"' }
-      ],
-      max_tokens: 50,
-      temperature: 0.1
-    })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    if (response.status === 401) {
-      throw new Error('AI API密钥无效，请检查配置');
-    } else if (response.status === 429) {
-      throw new Error('AI服务请求过于频繁，请稍后重试');
-    } else if (response.status >= 500) {
-      throw new Error('AI服务暂时不可用，请稍后重试');
-    } else {
-      throw new Error(`AI API调用失败: ${response.status} - ${errorText}`);
-    }
-  }
-
-  const data = await response.json();
-
-  if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-    throw new Error('AI服务返回数据格式异常');
-  }
-
-  const testResult = data.choices[0].message.content;
-  console.log('AI连接测试成功，响应:', testResult);
-
-  return {
-    status: response.status,
-    message: 'AI连接正常',
-    model: model,
-    testResponse: testResult
-  };
 }
 
 // 显示通知

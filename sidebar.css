@@ -1,0 +1,494 @@
+/* 善思 Blinko 侧边栏样式 */
+
+/* 侧边栏遮罩层 */
+.blinko-sidebar-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  z-index: 999998 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: all 0.3s ease !important;
+}
+
+.blinko-sidebar-overlay.blinko-sidebar-show {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* 侧边栏主容器 */
+.blinko-sidebar-container {
+  position: fixed !important;
+  top: 0 !important;
+  right: -450px !important;
+  width: 420px !important;
+  height: 100vh !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.15) !important;
+  z-index: 999999 !important;
+  transition: right 0.3s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  color: #2c3e50 !important;
+  overflow: hidden !important;
+}
+
+.blinko-sidebar-container.blinko-sidebar-show {
+  right: 0 !important;
+}
+
+/* 侧边栏内容区域 */
+.blinko-sidebar-content {
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* 关闭按钮 */
+.blinko-sidebar-close {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: white !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  font-size: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  z-index: 1000000 !important;
+}
+
+.blinko-sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.1) !important;
+}
+
+/* 头部样式 */
+.blinko-sidebar-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 16px 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  position: relative !important;
+}
+
+.blinko-sidebar-header-icon {
+  font-size: 24px !important;
+}
+
+.blinko-sidebar-header-title {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+.blinko-sidebar-settings-btn {
+  margin-left: auto !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: white !important;
+  padding: 8px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+.blinko-sidebar-settings-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.05) !important;
+}
+
+/* 链接信息区域 */
+.blinko-sidebar-link-section {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #e1e8ed !important;
+  background: #f8f9fa !important;
+}
+
+.blinko-sidebar-link-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+  color: #495057 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+.blinko-sidebar-page-title-display {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  margin-bottom: 8px !important;
+  line-height: 1.4 !important;
+  word-break: break-word !important;
+}
+
+.blinko-sidebar-page-url-display {
+  font-size: 12px !important;
+  color: #6c757d !important;
+  background: white !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid #e1e8ed !important;
+  word-break: break-all !important;
+  font-family: 'Monaco', 'Menlo', monospace !important;
+}
+
+/* 个人想法区域 */
+.blinko-sidebar-thoughts-section {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #e1e8ed !important;
+}
+
+.blinko-sidebar-thoughts-content {
+  background: white !important;
+  border: 1px solid #e1e8ed !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+  min-height: 60px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  resize: vertical !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+}
+
+.blinko-sidebar-thoughts-content:focus {
+  outline: none !important;
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1) !important;
+}
+
+/* 标签区域 */
+.blinko-sidebar-tags-section {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #e1e8ed !important;
+}
+
+.blinko-sidebar-tags-container {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin-bottom: 8px !important;
+}
+
+.blinko-sidebar-tag {
+  background: linear-gradient(45deg, #667eea, #764ba2) !important;
+  color: white !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  font-size: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.blinko-sidebar-tag-remove {
+  background: none !important;
+  border: none !important;
+  color: white !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.blinko-sidebar-tag-remove:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.blinko-sidebar-tag-input {
+  border: 1px solid #e1e8ed !important;
+  border-radius: 4px !important;
+  padding: 6px 8px !important;
+  font-size: 12px !important;
+  width: 120px !important;
+}
+
+.blinko-sidebar-tag-input:focus {
+  outline: none !important;
+  border-color: #667eea !important;
+}
+
+/* 底部操作区域 */
+.blinko-sidebar-actions-section {
+  padding: 20px !important;
+  margin-top: auto !important;
+}
+
+.blinko-sidebar-submit-btn {
+  background: linear-gradient(45deg, #28a745, #20c997) !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.blinko-sidebar-submit-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3) !important;
+}
+
+.blinko-sidebar-submit-btn:disabled {
+  background: #6c757d !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* 状态提示 */
+.blinko-sidebar-status {
+  padding: 8px 12px !important;
+  margin: 8px 0 !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+}
+
+.blinko-sidebar-success {
+  background: #d4edda !important;
+  color: #155724 !important;
+  border: 1px solid #c3e6cb !important;
+}
+
+.blinko-sidebar-error {
+  background: #f8d7da !important;
+  color: #721c24 !important;
+  border: 1px solid #f5c6cb !important;
+}
+
+.blinko-sidebar-warning {
+  background: #fff3cd !important;
+  color: #856404 !important;
+  border: 1px solid #ffeaa7 !important;
+}
+
+.blinko-sidebar-info {
+  background: #d1ecf1 !important;
+  color: #0c5460 !important;
+  border: 1px solid #bee5eb !important;
+}
+
+/* 加载动画 */
+.blinko-sidebar-loading {
+  display: inline-block !important;
+  width: 12px !important;
+  height: 12px !important;
+  border: 2px solid #667eea !important;
+  border-radius: 50% !important;
+  border-top-color: transparent !important;
+  animation: blinko-sidebar-spin 1s ease-in-out infinite !important;
+}
+
+@keyframes blinko-sidebar-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 隐藏类 */
+.blinko-sidebar-hidden {
+  display: none !important;
+}
+
+/* 原文摘要区域 */
+.blinko-sidebar-summary-section {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #e1e8ed !important;
+}
+
+.blinko-sidebar-section-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 12px !important;
+}
+
+.blinko-sidebar-section-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #495057 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+.blinko-sidebar-ai-generate-btn {
+  background: linear-gradient(45deg, #28a745, #20c997) !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.blinko-sidebar-ai-generate-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3) !important;
+}
+
+.blinko-sidebar-summary-content {
+  background: white !important;
+  border: 1px solid #e1e8ed !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+  min-height: 80px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  resize: vertical !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+}
+
+.blinko-sidebar-summary-content:focus {
+  outline: none !important;
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1) !important;
+}
+
+.blinko-sidebar-summary-placeholder {
+  color: #adb5bd !important;
+  font-style: italic !important;
+}
+
+/* 选中内容区域 */
+.blinko-sidebar-selected-content-section {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #e1e8ed !important;
+  background: linear-gradient(135deg, #fff8e1, #fff3c4) !important;
+}
+
+.blinko-sidebar-selected-content-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.blinko-sidebar-selected-content {
+  background: white !important;
+  border: 1px solid #e1e8ed !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  resize: vertical !important;
+  min-height: 80px !important;
+  max-height: 150px !important;
+  font-family: inherit !important;
+}
+
+.blinko-sidebar-selected-content:focus {
+  outline: none !important;
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+.blinko-sidebar-selected-summary-container {
+  border: 1px solid #e1e8ed !important;
+  border-radius: 8px !important;
+  background: white !important;
+  overflow: hidden !important;
+}
+
+.blinko-sidebar-selected-summary-header {
+  background: #f8f9fa !important;
+  padding: 8px 12px !important;
+  border-bottom: 1px solid #e1e8ed !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #495057 !important;
+}
+
+.blinko-sidebar-summary-actions {
+  display: flex !important;
+  gap: 4px !important;
+}
+
+.blinko-sidebar-selected-summary-content {
+  border: none !important;
+  padding: 12px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  resize: vertical !important;
+  min-height: 100px !important;
+  max-height: 200px !important;
+  font-family: inherit !important;
+  background: white !important;
+}
+
+.blinko-sidebar-selected-summary-content:focus {
+  outline: none !important;
+  box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.1) !important;
+}
+
+.blinko-sidebar-section-actions {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+.blinko-sidebar-action-btn {
+  background: #f8f9fa !important;
+  border: 1px solid #e1e8ed !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  color: #495057 !important;
+}
+
+.blinko-sidebar-action-btn:hover {
+  background: #e9ecef !important;
+  border-color: #adb5bd !important;
+}
+
+.blinko-sidebar-action-btn.blinko-sidebar-small {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+}
+
+.blinko-sidebar-action-btn.blinko-sidebar-mini {
+  padding: 2px 6px !important;
+  font-size: 11px !important;
+  min-width: 24px !important;
+}
+
+.blinko-sidebar-ai-generate-btn.blinko-sidebar-small {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>善思 Blinko 智能收集器</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sidepanel-container">
+    <!-- 头部 -->
+    <div class="sidepanel-header">
+      <div class="header-content">
+        <span class="header-icon">🤖</span>
+        <h1 class="header-title">善思 blinko</h1>
+        <div class="header-buttons">
+          <button class="test-btn" id="testBlinkoBtn" title="测试Blinko连接">🔗</button>
+          <button class="test-btn" id="testAIBtn" title="测试AI连接">🧠</button>
+          <button class="settings-btn" id="configBtn" title="配置设置">⚙️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="sidepanel-content">
+      <!-- 链接信息区域 -->
+      <div class="section link-section">
+        <div class="section-header">
+          <span class="section-icon">🔗</span>
+          <span class="section-title">标题和链接</span>
+        </div>
+        <div class="link-content">
+          <div id="pageTitle" class="page-title">加载中...</div>
+          <div id="pageUrl" class="page-url"></div>
+        </div>
+      </div>
+
+      <!-- 选中内容区域 -->
+      <div class="section selected-section" id="selectedSection" style="display: none;">
+        <div class="section-header">
+          <div class="section-title-group">
+            <span class="section-icon">✂️</span>
+            <span class="section-title">选中内容</span>
+          </div>
+          <div class="section-actions">
+            <button class="action-btn ai-btn" id="selectedAiBtn">
+              <span class="loading-spinner" id="selectedAiLoading" style="display: none;"></span>
+              <span id="selectedAiText">AI总结</span>
+            </button>
+            <button class="action-btn" id="refreshSelectedBtn" title="刷新选中内容">🔄</button>
+            <button class="action-btn clear-btn" id="clearSelectedBtn" title="清除选中内容">✕</button>
+          </div>
+        </div>
+        <div class="selected-content">
+          <textarea
+            id="selectedContent"
+            class="content-textarea"
+            placeholder="当前页面没有选中文本..."
+            rows="4"
+            readonly
+          ></textarea>
+          <div class="selected-summary-container" id="selectedSummaryContainer" style="display: none;">
+            <div class="summary-header">
+              <span>🤖 AI总结结果</span>
+              <div class="summary-actions">
+                <button class="mini-btn" id="moveToSummaryBtn" title="移动到原文摘要">📄</button>
+                <button class="mini-btn" id="moveToThoughtsBtn" title="移动到个人想法">💭</button>
+                <button class="mini-btn" id="editSummaryBtn" title="编辑总结">✏️</button>
+              </div>
+            </div>
+            <textarea
+              id="selectedSummaryContent"
+              class="summary-textarea"
+              placeholder="AI总结将显示在这里..."
+              rows="5"
+              readonly
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 原文摘要区域 -->
+      <div class="section summary-section">
+        <div class="section-header">
+          <div class="section-title-group">
+            <span class="section-icon">📄</span>
+            <span class="section-title">原文摘要</span>
+          </div>
+          <button class="action-btn ai-btn" id="aiGenerateBtn">
+            <span class="loading-spinner" id="aiLoading" style="display: none;"></span>
+            <span id="aiGenerateText">AI总结</span>
+          </button>
+        </div>
+        <textarea
+          id="summaryContent"
+          class="content-textarea"
+          placeholder="粘贴原文摘要..."
+          rows="4"
+        ></textarea>
+      </div>
+
+      <!-- 个人想法区域 -->
+      <div class="section thoughts-section">
+        <div class="section-header">
+          <span class="section-icon">💭</span>
+          <span class="section-title">个人想法</span>
+        </div>
+        <textarea
+          id="thoughtsContent"
+          class="content-textarea"
+          placeholder="输入你的想法..."
+          rows="3"
+        ></textarea>
+      </div>
+
+      <!-- 标签区域 -->
+      <div class="section tags-section">
+        <div class="section-header">
+          <span class="section-icon">🏷️</span>
+          <span class="section-title">标签</span>
+        </div>
+        <div id="tagsContainer" class="tags-container">
+          <!-- 标签将在这里动态生成 -->
+        </div>
+        <input
+          type="text"
+          id="tagInput"
+          class="tag-input"
+          placeholder="添加标签..."
+          style="display: none;"
+        >
+      </div>
+    </div>
+
+    <!-- 底部操作区域 -->
+    <div class="sidepanel-footer">
+      <button id="submitBtn" class="submit-btn">
+        <span>🤖</span>
+        <span>提交到 Blinko</span>
+      </button>
+      <div id="statusMessage" class="status-message"></div>
+    </div>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

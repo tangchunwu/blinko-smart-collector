@@ -8,8 +8,7 @@
     "contextMenus",
     "storage",
     "scripting",
-    "notifications",
-    "sidePanel"
+    "notifications"
   ],
   "host_permissions": [
     "http://*/*",
@@ -21,29 +20,40 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content-sidepanel.js"],
-      "css": [],
+      "js": ["content.js"],
       "run_at": "document_end"
     }
   ],
   "action": {
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icon16.png",
       "48": "icon48.png",
       "128": "icon128.png"
     }
   },
-  "side_panel": {
-    "default_path": "sidepanel.html"
-  },
   "options_page": "options.html",
   "commands": {
-    "toggle-sidebar": {
+    "quick-collect": {
       "suggested_key": {
-        "default": "Ctrl+Shift+B",
-        "mac": "Command+Shift+B"
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
       },
-      "description": "切换侧边栏显示"
+      "description": "快速收集当前页面"
+    },
+    "ai-summary": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
+        "mac": "Command+Shift+A"
+      },
+      "description": "AI总结当前文章"
+    },
+    "collect-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "收集选中文本"
     },
     "open-config": {
       "suggested_key": {
