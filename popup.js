@@ -1,3 +1,5 @@
+import { StorageService } from './js/services/storage-service.js';
+
 // 全局变量
 let currentTab = null;
 let currentPageInfo = null;
@@ -31,29 +33,38 @@ async function initializeInterface() {
     document.getElementById('pageUrl').textContent = currentTab.url;
 
     // 获取页面详细信息
+    // 获取页面详细信息
     showStatus('🔍 正在分析页面内容...', 'info');
-    const [result] = await chrome.scripting.executeScript({
-      target: { tabId: currentTab.id },
-      function: extractPageDetails
-    });
 
-    if (result.result) {
-      currentPageInfo = result.result;
-      console.log('页面信息提取成功:', currentPageInfo);
+    try {
+      // 发送消息给 content script 获取页面内容
+      const response = await chrome.tabs.sendMessage(currentTab.id, {
+        action: 'getPageContent'
+      });
 
-      // 生成智能标签
-      const classification = await classifyContent(currentPageInfo, currentTab.url);
-      currentTags = classification.tags || [];
+      if (response && (response.content || response.title)) {
+        currentPageInfo = response;
+        console.log('页面信息提取成功:', currentPageInfo);
 
-      // 更新界面
-      updateTagsDisplay();
+        // 生成智能标签
+        const classification = await classifyContent(currentPageInfo, currentTab.url);
+        currentTags = classification.tags || [];
 
-      // 检测选中文本
-      await checkSelectedText();
+        // 更新界面
+        updateTagsDisplay();
 
-      showStatus('✅ 页面分析完成', 'success');
-    } else {
-      console.warn('页面信息提取失败');
+        // 检测选中文本
+        await checkSelectedText();
+
+        showStatus('✅ 页面分析完成', 'success');
+      } else {
+        console.warn('页面信息提取失败或页面未加载完成');
+        showStatus('⚠️ 无法提取页面内容，请刷新重试', 'warning');
+      }
+    } catch (msgError) {
+      console.error('消息通信失败:', msgError);
+      // 如果无法连接 content script (可能是在不想注入的页面或者 content script 崩溃)
+      showStatus('⚠️ 无法连接到页面，请刷新页面后重试', 'warning');
     }
   } catch (error) {
     console.error('初始化失败:', error);
@@ -128,7 +139,7 @@ async function generateAISummary() {
     aiGenerateBtn.disabled = true;
 
     // 首先检查AI配置
-    const settings = await chrome.storage.sync.get(['aiApiKey', 'aiProvider', 'aiBaseUrl']);
+    const settings = await StorageService.getAISettings();
     console.log('AI配置检查:', { hasApiKey: !!settings.aiApiKey, provider: settings.aiProvider, baseUrl: settings.aiBaseUrl });
 
     if (!settings.aiApiKey) {
@@ -196,7 +207,7 @@ async function generateAISummary() {
 // 应用布局设置
 async function applyLayoutSettings() {
   try {
-    const settings = await chrome.storage.sync.get(['popupPosition']);
+    const settings = await StorageService.getSync(['popupPosition']);
     if (settings.popupPosition === 'right') {
       document.body.classList.add('right-position');
     }
@@ -209,18 +220,17 @@ async function applyLayoutSettings() {
 async function checkSelectedText() {
   try {
     // 检查功能是否启用
-    const settings = await chrome.storage.sync.get(['enableSelectedTextFeature']);
+    const settings = await StorageService.getSync(['enableSelectedTextFeature']);
     if (settings.enableSelectedTextFeature === false) {
       document.getElementById('selectedContentSection').style.display = 'none';
       return;
     }
 
-    const [result] = await chrome.scripting.executeScript({
-      target: { tabId: currentTab.id },
-      function: () => window.getSelection().toString()
+    const response = await chrome.tabs.sendMessage(currentTab.id, {
+      action: 'getSelectedText'
     });
 
-    selectedText = result.result?.trim() || '';
+    selectedText = response?.text?.trim() || '';
     console.log('检测到选中文本:', selectedText);
 
     if (selectedText) {
@@ -492,7 +502,7 @@ function removeTag(tagText) {
 
 // 检查配置状态
 async function checkConfigurationStatus() {
-  const settings = await chrome.storage.sync.get(['blinkoUrl', 'blinkoToken']);
+  const settings = await StorageService.getSync(['blinkoUrl', 'blinkoToken']);
 
   if (!settings.blinkoUrl || !settings.blinkoToken) {
     showStatus('⚠️ 请先配置 Blinko API', 'warning');
@@ -515,68 +525,7 @@ function showStatus(message, type) {
   }
 }
 
-// 页面详细信息提取函数（在页面上下文中执行）
-function extractPageDetails() {
-  const title = document.title;
-  const description = document.querySelector('meta[name="description"]')?.content ||
-                     document.querySelector('meta[property="og:description"]')?.content || '';
-  const keywords = document.querySelector('meta[name="keywords"]')?.content || '';
-  const author = document.querySelector('meta[name="author"]')?.content ||
-                document.querySelector('[rel="author"]')?.textContent || '';
 
-  // 提取主要内容
-  const contentSelectors = [
-    'article', '[role="main"]', '.content', '.post-content',
-    '.entry-content', '.article-content', '.post-body', 'main'
-  ];
-
-  let contentElement = null;
-  for (const selector of contentSelectors) {
-    contentElement = document.querySelector(selector);
-    if (contentElement) break;
-  }
-
-  if (!contentElement) contentElement = document.body;
-
-  // 清理内容
-  const clonedContent = contentElement.cloneNode(true);
-  const unwantedElements = clonedContent.querySelectorAll(
-    'script, style, nav, header, footer, .ad, .advertisement, .sidebar, .menu'
-  );
-  unwantedElements.forEach(el => el.remove());
-
-  const textContent = clonedContent.innerText || clonedContent.textContent;
-  const wordCount = textContent.length;
-
-  // 提取关键词
-  const text = textContent.toLowerCase();
-  const commonWords = ['的', '了', '在', '是', '我', '有', '和', '就', '不', '人', '都', '一', '个', '上', '也', '很', '到', '说', '要', '去', '你', '会', '着', 'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'this', 'that', 'these', 'those'];
-
-  const words = text.match(/[\u4e00-\u9fa5]+|[a-zA-Z]+/g) || [];
-  const wordFreq = {};
-
-  words.forEach(word => {
-    if (word.length > 1 && !commonWords.includes(word)) {
-      wordFreq[word] = (wordFreq[word] || 0) + 1;
-    }
-  });
-
-  const topKeywords = Object.entries(wordFreq)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 10)
-    .map(([word]) => word);
-
-  return {
-    title,
-    description,
-    keywords: keywords.split(',').map(k => k.trim()).filter(k => k),
-    author,
-    wordCount,
-    extractedKeywords: topKeywords,
-    domain: window.location.hostname,
-    pathname: window.location.pathname
-  };
-}
 
 // 智能分类内容
 async function classifyContent(pageInfo, url) {

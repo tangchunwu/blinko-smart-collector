@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <style>
@@ -11,6 +12,7 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #2c3e50;
     }
+
     .container {
       background: rgba(255, 255, 255, 0.98);
       border-radius: 0;
@@ -41,14 +43,17 @@
       align-items: center;
       gap: 12px;
     }
+
     .header-icon {
       font-size: 24px;
     }
+
     .header-title {
       font-size: 18px;
       font-weight: 600;
       margin: 0;
     }
+
     .settings-btn {
       margin-left: auto;
       background: rgba(255, 255, 255, 0.2);
@@ -60,6 +65,7 @@
       font-size: 16px;
       transition: all 0.2s ease;
     }
+
     .settings-btn:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: scale(1.05);
@@ -71,6 +77,7 @@
       border-bottom: 1px solid #e1e8ed;
       background: #f8f9fa;
     }
+
     .link-header {
       display: flex;
       align-items: center;
@@ -80,6 +87,7 @@
       font-size: 14px;
       font-weight: 500;
     }
+
     .page-title-display {
       font-size: 16px;
       font-weight: 600;
@@ -88,6 +96,7 @@
       line-height: 1.4;
       word-break: break-word;
     }
+
     .page-url-display {
       font-size: 12px;
       color: #6c757d;
@@ -104,12 +113,14 @@
       padding: 16px 20px;
       border-bottom: 1px solid #e1e8ed;
     }
+
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 12px;
     }
+
     .section-title {
       display: flex;
       align-items: center;
@@ -118,6 +129,7 @@
       font-size: 14px;
       font-weight: 500;
     }
+
     .ai-generate-btn {
       background: linear-gradient(45deg, #28a745, #20c997);
       color: white;
@@ -128,10 +140,12 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .ai-generate-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
     }
+
     .summary-content {
       background: white;
       border: 1px solid #e1e8ed;
@@ -145,11 +159,13 @@
       box-sizing: border-box;
       font-family: inherit;
     }
+
     .summary-content:focus {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
     }
+
     .summary-placeholder {
       color: #adb5bd;
       font-style: italic;
@@ -161,11 +177,13 @@
       border-bottom: 1px solid #e1e8ed;
       background: linear-gradient(135deg, #fff8e1, #fff3c4);
     }
+
     .selected-content-container {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
+
     .selected-content {
       background: white;
       border: 1px solid #e1e8ed;
@@ -178,17 +196,20 @@
       max-height: 150px;
       font-family: inherit;
     }
+
     .selected-content:focus {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
+
     .selected-summary-container {
       border: 1px solid #e1e8ed;
       border-radius: 8px;
       background: white;
       overflow: hidden;
     }
+
     .selected-summary-header {
       background: #f8f9fa;
       padding: 8px 12px;
@@ -200,10 +221,12 @@
       font-weight: 500;
       color: #495057;
     }
+
     .summary-actions {
       display: flex;
       gap: 4px;
     }
+
     .selected-summary-content {
       border: none;
       padding: 12px;
@@ -215,15 +238,18 @@
       font-family: inherit;
       background: white;
     }
+
     .selected-summary-content:focus {
       outline: none;
       box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.1);
     }
+
     .section-actions {
       display: flex;
       gap: 8px;
       align-items: center;
     }
+
     .action-btn {
       background: #f8f9fa;
       border: 1px solid #e1e8ed;
@@ -234,19 +260,23 @@
       transition: all 0.2s ease;
       color: #495057;
     }
+
     .action-btn:hover {
       background: #e9ecef;
       border-color: #adb5bd;
     }
+
     .action-btn.small {
       padding: 6px 12px;
       font-size: 12px;
     }
+
     .action-btn.mini {
       padding: 2px 6px;
       font-size: 11px;
       min-width: 24px;
     }
+
     .ai-generate-btn.small {
       padding: 6px 12px;
       font-size: 12px;
@@ -257,6 +287,7 @@
       padding: 16px 20px;
       border-bottom: 1px solid #e1e8ed;
     }
+
     .thoughts-content {
       background: white;
       border: 1px solid #e1e8ed;
@@ -270,6 +301,7 @@
       box-sizing: border-box;
       font-family: inherit;
     }
+
     .thoughts-content:focus {
       outline: none;
       border-color: #667eea;
@@ -281,12 +313,14 @@
       padding: 16px 20px;
       border-bottom: 1px solid #e1e8ed;
     }
+
     .tags-container {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       margin-bottom: 8px;
     }
+
     .tag {
       background: linear-gradient(45deg, #667eea, #764ba2);
       color: white;
@@ -297,6 +331,7 @@
       align-items: center;
       gap: 4px;
     }
+
     .tag-remove {
       background: none;
       border: none;
@@ -311,9 +346,11 @@
       align-items: center;
       justify-content: center;
     }
+
     .tag-remove:hover {
       background: rgba(255, 255, 255, 0.2);
     }
+
     .tag-input {
       border: 1px solid #e1e8ed;
       border-radius: 4px;
@@ -321,6 +358,7 @@
       font-size: 12px;
       width: 120px;
     }
+
     .tag-input:focus {
       outline: none;
       border-color: #667eea;
@@ -331,6 +369,7 @@
       padding: 20px;
       margin-top: auto;
     }
+
     .submit-btn {
       background: linear-gradient(45deg, #28a745, #20c997);
       color: white;
@@ -347,10 +386,12 @@
       justify-content: center;
       gap: 8px;
     }
+
     .submit-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
     }
+
     .submit-btn:disabled {
       background: #6c757d;
       cursor: not-allowed;
@@ -367,10 +408,30 @@
       font-weight: 500;
       text-align: center;
     }
-    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-    .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    .info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
 
     /* 加载动画 */
     .loading {
@@ -382,8 +443,11 @@
       border-top-color: transparent;
       animation: spin 1s ease-in-out infinite;
     }
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* 隐藏类 */
@@ -392,6 +456,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <!-- 头部 -->
@@ -427,13 +492,8 @@
         </div>
       </div>
       <div class="selected-content-container">
-        <textarea
-          id="selectedContent"
-          class="selected-content"
-          placeholder="当前页面没有选中文本..."
-          rows="4"
-          readonly
-        ></textarea>
+        <textarea id="selectedContent" class="selected-content" placeholder="当前页面没有选中文本..." rows="4"
+          readonly></textarea>
         <div class="selected-summary-container" id="selectedSummaryContainer" style="display: none;">
           <div class="selected-summary-header">
             <span>🤖 AI总结结果</span>
@@ -443,13 +503,8 @@
               <button class="action-btn mini" id="editSummaryBtn" title="编辑总结">✏️</button>
             </div>
           </div>
-          <textarea
-            id="selectedSummaryContent"
-            class="selected-summary-content"
-            placeholder="AI总结将显示在这里..."
-            rows="5"
-            readonly
-          ></textarea>
+          <textarea id="selectedSummaryContent" class="selected-summary-content" placeholder="AI总结将显示在这里..." rows="5"
+            readonly></textarea>
         </div>
       </div>
     </div>
@@ -466,12 +521,7 @@
           <span id="aiGenerateText">AI总结</span>
         </button>
       </div>
-      <textarea
-        id="summaryContent"
-        class="summary-content"
-        placeholder="粘贴原文摘要..."
-        rows="4"
-      ></textarea>
+      <textarea id="summaryContent" class="summary-content" placeholder="粘贴原文摘要..." rows="4"></textarea>
     </div>
 
     <!-- 个人想法区域 -->
@@ -480,12 +530,7 @@
         <span>💭</span>
         <span>个人想法</span>
       </div>
-      <textarea
-        id="thoughtsContent"
-        class="thoughts-content"
-        placeholder="输入你的想法..."
-        rows="3"
-      ></textarea>
+      <textarea id="thoughtsContent" class="thoughts-content" placeholder="输入你的想法..." rows="3"></textarea>
     </div>
 
     <!-- 标签区域 -->
@@ -497,13 +542,7 @@
       <div id="tagsContainer" class="tags-container">
         <!-- 标签将在这里动态生成 -->
       </div>
-      <input
-        type="text"
-        id="tagInput"
-        class="tag-input"
-        placeholder="添加标签..."
-        style="display: none;"
-      >
+      <input type="text" id="tagInput" class="tag-input" placeholder="添加标签..." style="display: none;">
     </div>
 
     <!-- 底部操作区域 -->
@@ -516,6 +555,7 @@
     </div>
   </div>
 
-  <script src="popup.js"></script>
+  <script src="popup.js" type="module"></script>
 </body>
+
 </html>

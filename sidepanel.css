@@ -1,107 +1,160 @@
-/* 善思 Blinko 侧边栏样式 (Side Panel版本) */
+/* 善思 Blinko 侧边栏样式 (Material Design 3 Revised) */
 
-/* 基础重置 */
+:root {
+  /* MD3 Color Tokens (Purple-based theme to match "Blinko") */
+  --md-sys-color-primary: #6750A4;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #EADDFF;
+  --md-sys-color-on-primary-container: #21005D;
+
+  --md-sys-color-secondary: #625B71;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #E8DEF8;
+  --md-sys-color-on-secondary-container: #1D192B;
+
+  --md-sys-color-tertiary: #7D5260;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #FFD8E4;
+  --md-sys-color-on-tertiary-container: #31111D;
+
+  --md-sys-color-error: #B3261E;
+  --md-sys-color-on-error: #FFFFFF;
+  --md-sys-color-error-container: #F9DEDC;
+  --md-sys-color-on-error-container: #410E0B;
+
+  --md-sys-color-background: #FFFBFE;
+  --md-sys-color-on-background: #1C1B1F;
+  --md-sys-color-surface: #FFFBFE;
+  --md-sys-color-on-surface: #1C1B1F;
+
+  --md-sys-color-surface-variant: #E7E0EC;
+  --md-sys-color-on-surface-variant: #49454F;
+  --md-sys-color-outline: #79747E;
+  --md-sys-color-outline-variant: #CAC4D0;
+
+  /* Surface Containers (for cards) */
+  --md-sys-color-surface-container-low: #F7F2FA;
+  --md-sys-color-surface-container: #F3EDF7;
+  --md-sys-color-surface-container-high: #ECE6F0;
+
+  /* Elevations */
+  --md-sys-elevation-level1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-level2: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+
+  /* Shape */
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 24px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* State Layers */
+  --md-sys-state-hover: 0.08;
+  --md-sys-state-focus: 0.12;
+  --md-sys-state-pressed: 0.12;
+}
+
+/* Base Reset */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #2c3e50;
-  background: #f8f9fa;
-  overflow-x: hidden;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-size: 14px;
+  line-height: 20px;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  /* Main scroll handled by content */
 }
 
-/* 主容器 */
+/* Container */
 .sidepanel-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background: white;
+  height: 100%;
+  background-color: var(--md-sys-color-background);
 }
 
-/* 头部样式 */
+/* Header */
 .sidepanel-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 16px;
-  flex-shrink: 0;
+  padding: 12px 16px;
+  background-color: var(--md-sys-color-surface);
+  /* Clean background */
+  color: var(--md-sys-color-on-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* border-bottom: 1px solid var(--md-sys-color-outline-variant); */
 }
 
 .header-content {
   display: flex;
   align-items: center;
+  width: 100%;
   gap: 12px;
 }
 
-.header-icon {
-  font-size: 24px;
-}
-
-.header-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-  flex: 1;
-}
-
-.header-buttons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.test-btn, .settings-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s ease;
-  min-width: 32px;
-  height: 32px;
+.header-icon-container {
+  color: var(--md-sys-color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.test-btn:hover, .settings-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+.header-title {
+  font-size: 22px;
+  /* Headline Small */
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+  flex-grow: 1;
+  margin: 0;
 }
 
-.test-btn:disabled, .settings-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.header-buttons {
+  display: flex;
+  gap: 8px;
 }
 
-/* 内容区域 */
+/* Main Content */
 .sidepanel-content {
   flex: 1;
   overflow-y: auto;
-  padding: 0;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* 通用区块样式 */
+/* Cards (Sections) */
 .section {
-  border-bottom: 1px solid #e1e8ed;
-  padding: 16px;
+  background-color: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  padding: 12px 16px;
+  position: relative;
+  transition: background-color 0.2s;
 }
 
-.section:last-child {
-  border-bottom: none;
+.section:hover {
+  background-color: var(--md-sys-color-surface-container);
+}
+
+/* 链接区域更紧凑 */
+.link-section {
+  padding: 10px 16px;
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .section-title-group {
@@ -111,173 +164,526 @@ body {
 }
 
 .section-icon {
-  font-size: 16px;
+  color: var(--md-sys-color-primary);
 }
 
 .section-title {
   font-size: 14px;
+  /* Title Small */
   font-weight: 500;
-  color: #495057;
+  color: var(--md-sys-color-on-surface-variant);
+  letter-spacing: 0.1px;
 }
 
 .section-actions {
   display: flex;
   gap: 8px;
-  align-items: center;
 }
 
-/* 链接信息区域 */
-.link-section {
-  background: #f8f9fa;
+/* Link Content */
+.link-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .page-title {
   font-size: 16px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 8px;
-  line-height: 1.4;
-  word-break: break-word;
+  /* Body Large */
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+  line-height: 24px;
 }
 
 .page-url {
   font-size: 12px;
-  color: #6c757d;
-  background: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #e1e8ed;
-  word-break: break-all;
-  font-family: 'Monaco', 'Menlo', monospace;
-}
-
-/* 选中内容区域 */
-.selected-section {
-  background: linear-gradient(135deg, #fff8e1, #fff3c4);
-}
-
-.selected-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.selected-summary-container {
-  border: 1px solid #e1e8ed;
-  border-radius: 8px;
-  background: white;
+  /* Body Small */
+  color: var(--md-sys-color-outline);
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.summary-header {
-  background: #f8f9fa;
-  padding: 8px 12px;
-  border-bottom: 1px solid #e1e8ed;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  font-weight: 500;
-  color: #495057;
-}
-
-.summary-actions {
-  display: flex;
-  gap: 4px;
-}
-
-/* 文本区域 */
+/* Textareas (Filled Text Field style) */
 .content-textarea {
   width: 100%;
-  border: 1px solid #e1e8ed;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 14px;
-  line-height: 1.5;
-  resize: vertical;
+  background-color: var(--md-sys-color-surface-container-high);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-large);
+  /* 16px */
+  padding: 12px 16px;
   font-family: inherit;
-  background: white;
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface);
+  resize: vertical;
+  min-height: 100px;
+  transition: box-shadow 0.2s;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* 原文摘要区域的textarea更大 */
+.summary-section .content-textarea {
+  min-height: 180px;
+}
+
+/* 摘要内容包装器 */
+.summary-content-wrapper {
+  position: relative;
+}
+
+/* Markdown预览区域 */
+.markdown-preview {
+  background-color: var(--md-sys-color-surface-container-high);
+  border-radius: var(--md-sys-shape-corner-large);
+  padding: 12px 16px;
+  min-height: 180px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--md-sys-color-on-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.markdown-preview:empty::before {
+  content: '粘贴原文摘要...';
+  color: var(--md-sys-color-on-surface-variant);
+  opacity: 0.7;
+}
+
+/* Markdown标题 */
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3 {
+  font-weight: 600;
+  margin: 12px 0 8px 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.markdown-preview h1 {
+  font-size: 1.3em;
+}
+
+.markdown-preview h2 {
+  font-size: 1.15em;
+}
+
+.markdown-preview h3 {
+  font-size: 1.05em;
+}
+
+.markdown-preview h1:first-child,
+.markdown-preview h2:first-child,
+.markdown-preview h3:first-child {
+  margin-top: 0;
+}
+
+/* Markdown列表 */
+.markdown-preview ul,
+.markdown-preview ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.markdown-preview li {
+  margin: 4px 0;
+}
+
+/* Markdown代码 */
+.markdown-preview code {
+  background-color: var(--md-sys-color-surface-container);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'SF Mono', Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  color: var(--md-sys-color-primary);
+}
+
+.markdown-preview pre {
+  background-color: var(--md-sys-color-surface-container);
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+.markdown-preview pre code {
+  background: none;
+  padding: 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+/* Markdown粗体和斜体 */
+.markdown-preview strong {
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+}
+
+.markdown-preview em {
+  font-style: italic;
+}
+
+/* Markdown链接 */
+.markdown-preview a {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+}
+
+.markdown-preview a:hover {
+  text-decoration: underline;
+}
+
+/* Markdown引用 */
+.markdown-preview blockquote {
+  border-left: 3px solid var(--md-sys-color-primary);
+  padding-left: 12px;
+  margin: 8px 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-style: italic;
+}
+
+/* Markdown分隔线 */
+.markdown-preview hr {
+  border: none;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  margin: 12px 0;
+}
+
+/* Markdown表格 */
+.markdown-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 0.9em;
+}
+
+.markdown-preview th,
+.markdown-preview td {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.markdown-preview th {
+  background-color: var(--md-sys-color-surface-container);
+  font-weight: 600;
+}
+
+/* 数学公式保护样式 */
+.markdown-preview .math-inline,
+.markdown-preview .math-block {
+  font-family: 'Times New Roman', serif;
+  background-color: var(--md-sys-color-surface-container);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+/* 摘要操作按钮组 */
+.summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .content-textarea:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  border-bottom: 2px solid var(--md-sys-color-primary);
+  background-color: var(--md-sys-color-surface-container-high);
+  /* Keep same bg */
+}
+
+.content-textarea::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+  opacity: 0.7;
+}
+
+/* Buttons */
+
+/* Icon Button */
+.icon-btn,
+.icon-btn-small,
+.mini-btn {
+  background: transparent;
+  border: none;
+  color: var(--md-sys-color-on-surface-variant);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+}
+
+.icon-btn:hover {
+  background-color: rgba(73, 69, 79, var(--md-sys-state-hover));
+  /* on-surface-variant hover */
+  color: var(--md-sys-color-on-surface);
+}
+
+.icon-btn-small {
+  width: 32px;
+  height: 32px;
+}
+
+.icon-btn-small:hover {
+  background-color: rgba(73, 69, 79, var(--md-sys-state-hover));
+}
+
+.mini-btn {
+  width: 28px;
+  height: 28px;
+  color: var(--md-sys-color-primary);
+}
+
+.mini-btn:hover {
+  background-color: rgba(103, 80, 164, var(--md-sys-state-hover));
+  /* primary hover */
+}
+
+
+/* Capsule Action Button (Tonal Button) */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 32px;
+  /* Small height for inline actions */
+  padding: 0 16px;
+  border-radius: var(--md-sys-shape-corner-full);
+  /* Capsule */
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Default Action Button (Secondary/Tonal) */
+.action-btn:not(.ai-btn):not(.clear-btn) {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.action-btn:not(.ai-btn):not(.clear-btn):hover {
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+/* AI Button (Primary) */
+.ai-btn {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.ai-btn:hover {
+  box-shadow: var(--md-sys-elevation-level1);
+  background-color: rgba(103, 80, 164, 0.92);
+  /* slight dim */
+}
+
+.ai-btn:disabled {
+  background-color: rgba(28, 27, 31, 0.12);
+  color: rgba(28, 27, 31, 0.38);
+  box-shadow: none;
+  cursor: default;
+}
+
+/* AI按钮加载状态 */
+.ai-btn.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.ai-btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-right-color: transparent;
+  animation: ai-spin 0.8s linear infinite;
+  margin-left: 6px;
+}
+
+@keyframes ai-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Clear Button (Error Tonal) */
+.clear-btn.icon-btn-small {
+  color: var(--md-sys-color-error);
+}
+
+.clear-btn.icon-btn-small:hover {
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+
+/* Footer Submit Button (Extended FAB Style) */
+.sidepanel-footer {
+  padding: 8px 24px 16px;
+  background-color: transparent;
+  /* Let container bg show */
+}
+
+.submit-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: var(--md-sys-shape-corner-large);
+  /* 16px per request or full capsule if preferred, I use 16px for FAB-ish look or 24/full */
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  /* 24px per request */
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--md-sys-elevation-level1);
+  /* Surface level shadow */
+}
+
+.submit-btn:hover {
+  box-shadow: var(--md-sys-elevation-level2);
+  background-color: #E0D0FA;
+  /* customized hover state for Primary Container */
+}
+
+.submit-btn:active {
+  transform: scale(0.99);
+}
+
+.submit-btn:disabled {
+  background-color: rgba(29, 25, 43, 0.12);
+  color: rgba(29, 25, 43, 0.38);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* 提交按钮AI生成中状态 */
+.submit-btn.ai-generating {
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  cursor: pointer;
+  position: relative;
+}
+
+.submit-btn.ai-generating:hover {
+  background-color: #F9DEDC;
+}
+
+.submit-btn.ai-generating .icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 旋转的加载圈 */
+.submit-btn.ai-generating .icon::before {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--md-sys-color-error);
+  border-radius: 50%;
+  border-right-color: transparent;
+  animation: submit-spin 1s linear infinite;
+}
+
+/* 停止图标 */
+.submit-btn.ai-generating .submit-icon {
+  display: none;
+}
+
+.submit-btn.ai-generating .stop-icon {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: var(--md-sys-color-error);
+  border-radius: 2px;
+}
+
+@keyframes submit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.submit-icon {
+  margin-right: -4px;
+}
+
+/* AI Summary Result Container */
+.selected-summary-container {
+  margin-top: 12px;
+  background-color: var(--md-sys-color-surface);
+  border-radius: var(--md-sys-shape-corner-medium);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  overflow: hidden;
+}
+
+.summary-header {
+  background-color: var(--md-sys-color-surface-container-high);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .summary-textarea {
-  border: none;
-  padding: 12px;
-  font-size: 14px;
-  line-height: 1.5;
-  resize: vertical;
-  font-family: inherit;
-  background: white;
   width: 100%;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface);
 }
 
 .summary-textarea:focus {
   outline: none;
-  box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.1);
 }
 
-/* 按钮样式 */
-.action-btn {
-  border: 1px solid #e1e8ed;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #495057;
-  background: #f8f9fa;
+/* Tags */
+.tags-section {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px;
+  margin-bottom: 0;
 }
 
-.action-btn:hover {
-  background: #e9ecef;
-  border-color: #adb5bd;
+.tags-section .section-header {
+  margin-bottom: 6px;
 }
 
-.ai-btn {
-  background: linear-gradient(45deg, #28a745, #20c997);
-  color: white;
-  border: none;
-}
-
-.ai-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-}
-
-.clear-btn {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 6px 8px;
-}
-
-.clear-btn:hover {
-  background: #c82333;
-}
-
-.mini-btn {
-  padding: 2px 6px;
-  font-size: 11px;
-  min-width: 24px;
-  background: #f8f9fa;
-  border: 1px solid #e1e8ed;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #495057;
-}
-
-.mini-btn:hover {
-  background: #e9ecef;
-  border-color: #adb5bd;
-}
-
-/* 标签区域 */
 .tags-container {
   display: flex;
   flex-wrap: wrap;
@@ -286,159 +692,264 @@ body {
 }
 
 .tag {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border-radius: 6px;
+  /* Small rounded corner */
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 4px;
+  transition: box-shadow 0.2s;
 }
 
-.add-tag {
-  background: #f8f9fa;
-  color: #495057;
-  border: 1px dashed #adb5bd;
-  cursor: pointer;
-}
-
-.add-tag:hover {
-  background: #e9ecef;
+.tag:hover {
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 .tag-remove {
-  background: none;
+  background: transparent;
   border: none;
-  color: white;
+  color: var(--md-sys-color-on-secondary-container);
   cursor: pointer;
-  font-size: 14px;
-  padding: 0;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
 }
 
 .tag-remove:hover {
-  background: rgba(255, 255, 255, 0.2);
+  opacity: 1;
 }
 
 .tag-input {
-  border: 1px solid #e1e8ed;
-  border-radius: 4px;
-  padding: 6px 8px;
-  font-size: 12px;
-  width: 120px;
+  width: 100%;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-sys-shape-corner-medium);
+  padding: 8px 12px;
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface);
+  font-size: 13px;
 }
 
 .tag-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--md-sys-color-primary);
+  border-width: 2px;
+  padding: 7px 11px;
+  /* Adjust for border width change */
 }
 
-/* 底部操作区域 */
-.sidepanel-footer {
-  padding: 20px;
-  border-top: 1px solid #e1e8ed;
-  background: white;
-  flex-shrink: 0;
+/* Thoughts Hint */
+.thoughts-hint {
+  font-size: 12px;
+  color: var(--md-sys-color-primary);
+  opacity: 0.8;
+  margin-left: auto;
 }
 
-.submit-btn {
-  background: linear-gradient(45deg, #28a745, #20c997);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  transition: all 0.3s ease;
+.voice-input-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-primary);
+  border: 1px solid var(--md-sys-color-outline-variant);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 5;
 }
 
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+.voice-input-btn:hover {
+  background-color: var(--md-sys-color-primary-container);
 }
 
-.submit-btn:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+.voice-input-btn.recording {
+  background-color: var(--md-sys-color-error);
+  color: var(--md-sys-color-on-error);
+  border-color: var(--md-sys-color-error);
+  animation: pulse 1.5s infinite;
 }
 
-/* 状态提示 */
-.status-message {
-  padding: 8px 12px;
-  margin: 8px 0;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  text-align: center;
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(179, 38, 30, 0.4);
+  }
+
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 6px rgba(179, 38, 30, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(179, 38, 30, 0);
+  }
 }
 
-.status-success { 
-  background: #d4edda; 
-  color: #155724; 
-  border: 1px solid #c3e6cb; 
-}
-
-.status-error { 
-  background: #f8d7da; 
-  color: #721c24; 
-  border: 1px solid #f5c6cb; 
-}
-
-.status-warning { 
-  background: #fff3cd; 
-  color: #856404; 
-  border: 1px solid #ffeaa7; 
-}
-
-.status-info { 
-  background: #d1ecf1; 
-  color: #0c5460; 
-  border: 1px solid #bee5eb; 
-}
-
-/* 加载动画 */
 .loading-spinner {
   display: inline-block;
   width: 12px;
   height: 12px;
-  border: 2px solid #667eea;
+  border: 2px solid currentColor;
   border-radius: 50%;
-  border-top-color: transparent;
-  animation: spin 1s ease-in-out infinite;
+  border-right-color: transparent;
+  animation: rotate 1s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* 滚动条样式 */
-.sidepanel-content::-webkit-scrollbar {
-  width: 6px;
+.status-message {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 12px;
+  min-height: 20px;
 }
 
-.sidepanel-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.status-success {
+  color: #146c2e;
 }
 
-.sidepanel-content::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+/* Green */
+.status-error {
+  color: #b3261e;
 }
 
-.sidepanel-content::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+/* Red */
+.status-info {
+  color: #49454f;
+}
+
+/* Dark Gray */
+
+/* ========== 节日主题样式 ========== */
+
+/* 圣诞节主题 */
+body.theme-christmas {
+  --md-sys-color-primary: #2E7D32;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #C8E6C9;
+  --md-sys-color-on-primary-container: #1B5E20;
+
+  --md-sys-color-secondary: #C62828;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #FFCDD2;
+  --md-sys-color-on-secondary-container: #B71C1C;
+
+  --md-sys-color-tertiary: #FFD700;
+  --md-sys-color-on-tertiary: #5D4037;
+  --md-sys-color-tertiary-container: #FFF8E1;
+  --md-sys-color-on-tertiary-container: #E65100;
+
+  --md-sys-color-background: #FAFAFA;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-surface-container-low: #F1F8E9;
+  --md-sys-color-surface-container: #E8F5E9;
+  --md-sys-color-surface-container-high: #DCEDC8;
+}
+
+body.theme-christmas .header-icon-container {
+  color: #C62828;
+}
+
+body.theme-christmas .submit-btn {
+  background: linear-gradient(135deg, #2E7D32, #1B5E20);
+  color: white;
+}
+
+body.theme-christmas .submit-btn:hover {
+  background: linear-gradient(135deg, #388E3C, #2E7D32);
+}
+
+/* 元旦节主题 */
+body.theme-newyear {
+  --md-sys-color-primary: #E91E63;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #FCE4EC;
+  --md-sys-color-on-primary-container: #880E4F;
+
+  --md-sys-color-secondary: #FFD700;
+  --md-sys-color-on-secondary: #5D4037;
+  --md-sys-color-secondary-container: #FFF8E1;
+  --md-sys-color-on-secondary-container: #E65100;
+
+  --md-sys-color-tertiary: #9C27B0;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #F3E5F5;
+  --md-sys-color-on-tertiary-container: #6A1B9A;
+
+  --md-sys-color-background: #FFFDF7;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-surface-container-low: #FFF8E1;
+  --md-sys-color-surface-container: #FFECB3;
+  --md-sys-color-surface-container-high: #FFE082;
+}
+
+body.theme-newyear .header-icon-container {
+  color: #FFD700;
+}
+
+body.theme-newyear .submit-btn {
+  background: linear-gradient(135deg, #E91E63, #C2185B);
+  color: white;
+}
+
+body.theme-newyear .submit-btn:hover {
+  background: linear-gradient(135deg, #F06292, #E91E63);
+}
+
+/* 春节主题 */
+body.theme-spring {
+  --md-sys-color-primary: #D32F2F;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #FFCDD2;
+  --md-sys-color-on-primary-container: #B71C1C;
+
+  --md-sys-color-secondary: #FFD700;
+  --md-sys-color-on-secondary: #5D4037;
+  --md-sys-color-secondary-container: #FFF8E1;
+  --md-sys-color-on-secondary-container: #E65100;
+
+  --md-sys-color-tertiary: #FF6F00;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #FFE0B2;
+  --md-sys-color-on-tertiary-container: #E65100;
+
+  --md-sys-color-background: #FFF5F5;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-surface-container-low: #FFEBEE;
+  --md-sys-color-surface-container: #FFCDD2;
+  --md-sys-color-surface-container-high: #EF9A9A;
+}
+
+body.theme-spring .header-icon-container {
+  color: #D32F2F;
+}
+
+body.theme-spring .submit-btn {
+  background: linear-gradient(135deg, #D32F2F, #B71C1C);
+  color: white;
+}
+
+body.theme-spring .submit-btn:hover {
+  background: linear-gradient(135deg, #E53935, #D32F2F);
 }

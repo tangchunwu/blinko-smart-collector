@@ -1,22 +1,60 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>善思 Blinko 智能收集器</title>
   <link rel="stylesheet" href="sidepanel.css">
 </head>
+
 <body>
   <div class="sidepanel-container">
     <!-- 头部 -->
     <div class="sidepanel-header">
       <div class="header-content">
-        <span class="header-icon">🤖</span>
+        <div class="header-icon-container">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            class="app-icon" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 8V4H8" />
+            <rect width="16" height="12" x="4" y="8" rx="2" />
+            <path d="M2 14h2" />
+            <path d="M20 14h2" />
+            <path d="M15 13v2" />
+            <path d="M9 13v2" />
+          </svg>
+        </div>
         <h1 class="header-title">善思 blinko</h1>
         <div class="header-buttons">
-          <button class="test-btn" id="testBlinkoBtn" title="测试Blinko连接">🔗</button>
-          <button class="test-btn" id="testAIBtn" title="测试AI连接">🧠</button>
-          <button class="settings-btn" id="configBtn" title="配置设置">⚙️</button>
+          <button class="icon-btn" id="testBlinkoBtn" title="测试Blinko连接">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="testAIBtn" title="测试AI连接">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+              <path d="M12 3v1" />
+              <path d="M12 20v1" />
+              <path d="M3 12h1" />
+              <path d="M20 12h1" />
+              <path d="m18.364 5.636-.707.707" />
+              <path d="m6.343 17.657-.707.707" />
+              <path d="m5.636 5.636.707.707" />
+              <path d="m17.657 17.657.707.707" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="configBtn" title="配置设置">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -26,7 +64,11 @@
       <!-- 链接信息区域 -->
       <div class="section link-section">
         <div class="section-header">
-          <span class="section-icon">🔗</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="section-icon">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
           <span class="section-title">标题和链接</span>
         </div>
         <div class="link-content">
@@ -39,7 +81,15 @@
       <div class="section selected-section" id="selectedSection" style="display: none;">
         <div class="section-header">
           <div class="section-title-group">
-            <span class="section-icon">✂️</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="section-icon">
+              <circle cx="6" cy="6" r="3" />
+              <path d="M8.12 8.12 12 12" />
+              <path d="M20 4 8.12 15.88" />
+              <circle cx="6" cy="18" r="3" />
+              <path d="M14.8 14.8 20 20" />
+            </svg>
             <span class="section-title">选中内容</span>
           </div>
           <div class="section-actions">
@@ -47,34 +97,69 @@
               <span class="loading-spinner" id="selectedAiLoading" style="display: none;"></span>
               <span id="selectedAiText">AI总结</span>
             </button>
-            <button class="action-btn" id="refreshSelectedBtn" title="刷新选中内容">🔄</button>
-            <button class="action-btn clear-btn" id="clearSelectedBtn" title="清除选中内容">✕</button>
+            <button class="icon-btn-small" id="refreshSelectedBtn" title="刷新选中内容">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6" />
+                <path d="M21.34 15.57a10 10 0 1 1-.57-8.38" />
+              </svg>
+            </button>
+            <button class="icon-btn-small clear-btn" id="clearSelectedBtn" title="清除选中内容">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </button>
           </div>
         </div>
         <div class="selected-content">
-          <textarea
-            id="selectedContent"
-            class="content-textarea"
-            placeholder="当前页面没有选中文本..."
-            rows="4"
-            readonly
-          ></textarea>
+          <textarea id="selectedContent" class="content-textarea" placeholder="当前页面没有选中文本..." rows="4"
+            readonly></textarea>
           <div class="selected-summary-container" id="selectedSummaryContainer" style="display: none;">
             <div class="summary-header">
-              <span>🤖 AI总结结果</span>
+              <div class="section-title-group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+                  <path d="M12 3v1" />
+                  <path d="M12 20v1" />
+                  <path d="M3 12h1" />
+                  <path d="M20 12h1" />
+                  <path d="m18.364 5.636-.707.707" />
+                  <path d="m6.343 17.657-.707.707" />
+                  <path d="m5.636 5.636.707.707" />
+                  <path d="m17.657 17.657.707.707" />
+                </svg>
+                <span>AI总结结果</span>
+              </div>
               <div class="summary-actions">
-                <button class="mini-btn" id="moveToSummaryBtn" title="移动到原文摘要">📄</button>
-                <button class="mini-btn" id="moveToThoughtsBtn" title="移动到个人想法">💭</button>
-                <button class="mini-btn" id="editSummaryBtn" title="编辑总结">✏️</button>
+                <button class="mini-btn" id="moveToSummaryBtn" title="移动到原文摘要">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" x2="8" y1="13" y2="13" />
+                    <line x1="16" x2="8" y1="17" y2="17" />
+                    <line x1="10" x2="8" y1="9" y2="9" />
+                  </svg>
+                </button>
+                <button class="mini-btn" id="moveToThoughtsBtn" title="移动到个人想法">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                </button>
+                <button class="mini-btn" id="editSummaryBtn" title="编辑总结">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                  </svg>
+                </button>
               </div>
             </div>
-            <textarea
-              id="selectedSummaryContent"
-              class="summary-textarea"
-              placeholder="AI总结将显示在这里..."
-              rows="5"
-              readonly
-            ></textarea>
+            <textarea id="selectedSummaryContent" class="summary-textarea" placeholder="AI总结将显示在这里..." rows="5"
+              readonly></textarea>
           </div>
         </div>
       </div>
@@ -83,65 +168,104 @@
       <div class="section summary-section">
         <div class="section-header">
           <div class="section-title-group">
-            <span class="section-icon">📄</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="section-icon">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" x2="8" y1="13" y2="13" />
+              <line x1="16" x2="8" y1="17" y2="17" />
+              <line x1="10" x2="8" y1="9" y2="9" />
+            </svg>
             <span class="section-title">原文摘要</span>
           </div>
-          <button class="action-btn ai-btn" id="aiGenerateBtn">
-            <span class="loading-spinner" id="aiLoading" style="display: none;"></span>
-            <span id="aiGenerateText">AI总结</span>
-          </button>
+          <div class="summary-actions">
+            <button class="icon-btn-small" id="toggleSummaryEdit" title="切换编辑/预览">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+              </svg>
+            </button>
+            <button class="action-btn ai-btn" id="aiGenerateBtn">
+              <span class="loading-spinner" id="aiLoading" style="display: none;"></span>
+              <span id="aiGenerateText">AI总结</span>
+            </button>
+          </div>
         </div>
-        <textarea
-          id="summaryContent"
-          class="content-textarea"
-          placeholder="粘贴原文摘要..."
-          rows="4"
-        ></textarea>
+        <div class="summary-content-wrapper">
+          <textarea id="summaryContent" class="content-textarea" placeholder="粘贴原文摘要..." rows="4"
+            style="display: none;"></textarea>
+          <div id="summaryPreview" class="markdown-preview"></div>
+        </div>
       </div>
 
       <!-- 个人想法区域 -->
       <div class="section thoughts-section">
         <div class="section-header">
-          <span class="section-icon">💭</span>
-          <span class="section-title">个人想法</span>
+          <div class="section-title-group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="section-icon">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span class="section-title">个人想法</span>
+          </div>
+          <span id="thoughtsHint" class="thoughts-hint">开始写下你的思考...</span>
         </div>
-        <textarea
-          id="thoughtsContent"
-          class="content-textarea"
-          placeholder="输入你的想法..."
-          rows="3"
-        ></textarea>
+        <div class="thoughts-input-wrapper" style="position: relative;">
+          <textarea id="thoughtsContent" class="content-textarea" placeholder="输入你的想法...或点击🎤语音输入" rows="3"></textarea>
+          <button id="voiceInputBtn" class="voice-input-btn" title="语音输入">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" x2="12" y1="19" y2="23" />
+              <line x1="8" x2="16" y1="23" y2="23" />
+            </svg>
+          </button>
+          <div id="encouragementContainer"></div>
+        </div>
       </div>
 
       <!-- 标签区域 -->
       <div class="section tags-section">
         <div class="section-header">
-          <span class="section-icon">🏷️</span>
-          <span class="section-title">标签</span>
+          <div class="section-title-group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="section-icon">
+              <path
+                d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l5 5a2 2 0 0 0 2.828 0l7.172-7.172a2 2 0 0 0 0-2.828l-5-5z" />
+              <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" />
+            </svg>
+            <span class="section-title">标签</span>
+          </div>
         </div>
         <div id="tagsContainer" class="tags-container">
           <!-- 标签将在这里动态生成 -->
         </div>
-        <input
-          type="text"
-          id="tagInput"
-          class="tag-input"
-          placeholder="添加标签..."
-          style="display: none;"
-        >
+        <input type="text" id="tagInput" class="tag-input" placeholder="添加标签...">
       </div>
     </div>
 
     <!-- 底部操作区域 -->
     <div class="sidepanel-footer">
-      <button id="submitBtn" class="submit-btn">
-        <span>🤖</span>
-        <span>提交到 Blinko</span>
+      <button id="submitBtn" class="submit-btn" disabled>
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            class="submit-icon" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 12 7-7 7 7" />
+            <path d="M12 19V5" />
+          </svg>
+          <span class="stop-icon" style="display: none;"></span>
+        </span>
+        <span class="label">提交到 Blinko</span>
       </button>
       <div id="statusMessage" class="status-message"></div>
     </div>
   </div>
 
-  <script src="sidepanel.js"></script>
+  <script src="sidepanel.js" type="module"></script>
 </body>
+
 </html>

@@ -9,19 +9,25 @@
     "storage",
     "scripting",
     "notifications",
-    "sidePanel"
+    "sidePanel",
+    "audioCapture"
   ],
   "host_permissions": [
     "http://*/*",
     "https://*/*"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content-sidepanel.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content-sidepanel.js"
+      ],
       "css": [],
       "run_at": "document_end"
     }
@@ -57,5 +63,16 @@
     "16": "icon16.png",
     "48": "icon48.png",
     "128": "icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "js/utils/content-extractor.js",
+        "js/utils/constants.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }

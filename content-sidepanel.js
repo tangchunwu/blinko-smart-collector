@@ -1,47 +1,81 @@
 // 页面内容脚本 - 处理页面级交互和信息收集 (Side Panel版本)
-(function() {
+(async function () {
   'use strict';
+
+  // 动态导入 ContentExtractor
+  const src = chrome.runtime.getURL('js/utils/content-extractor.js');
+  const { ContentExtractor } = await import(src);
 
   // 监听来自background和sidepanel的消息
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    switch (request.action) {
-      case 'getPageInfo':
-        sendResponse({
-          title: document.title,
-          url: window.location.href
-        });
-        break;
-      case 'getSelectedText':
-        sendResponse({ text: window.getSelection().toString() });
-        break;
-      case 'showPageNotification':
-        showPageNotification(request.message, request.type);
-        break;
-      case 'highlightCollectedText':
-        highlightCollectedText();
-        break;
-      case 'getPageContent':
-        try {
-          const content = document.body.innerText || document.body.textContent || '';
-          console.log('获取页面内容，长度:', content.length);
-          sendResponse({
-            content: content,
-            title: document.title,
-            url: window.location.href
-          });
-        } catch (error) {
-          console.error('获取页面内容失败:', error);
-          sendResponse({
-            content: '',
-            title: document.title,
-            url: window.location.href,
-            error: error.message
-          });
+    // 异步处理消息，返回 true 保持通道开放
+    (async () => {
+      try {
+        switch (request.action) {
+          case 'getPageInfo':
+            const metadata = ContentExtractor.extractMetadata();
+            sendResponse(metadata);
+            break;
+
+          case 'getSelectedText':
+            sendResponse({ text: window.getSelection().toString() });
+            break;
+
+          case 'showPageNotification':
+            showPageNotification(request.message, request.type);
+            sendResponse({ success: true });
+            break;
+
+          case 'highlightCollectedText':
+            highlightCollectedText();
+            sendResponse({ success: true });
+            break;
+
+          case 'getPageContent':
+            try {
+              const fullInfo = ContentExtractor.extractAll();
+              console.log('ContentExtractor 提取完成:', {
+                title: fullInfo.title,
+                contentLength: fullInfo.content?.length,
+                keywords: fullInfo.extractedKeywords?.length
+              });
+
+              sendResponse({
+                content: fullInfo.content,
+                title: fullInfo.title,
+                url: fullInfo.url,
+                excerpt: fullInfo.excerpt,
+                isReadability: fullInfo.isReadability || true,
+                description: fullInfo.description,
+                keywords: fullInfo.keywords,
+                author: fullInfo.author,
+                wordCount: fullInfo.wordCount,
+                extractedKeywords: fullInfo.extractedKeywords
+              });
+            } catch (error) {
+              console.error('ContentExtractor 提取失败:', error);
+              // 回退到简单提取
+              sendResponse({
+                content: document.body.innerText || '',
+                title: document.title,
+                url: window.location.href,
+                isReadability: false,
+                error: error.message
+              });
+            }
+            break;
         }
-        break;
-    }
+      } catch (error) {
+        console.error('消息处理错误:', error);
+        // 如果还没有发送响应，发送错误
+        try {
+          sendResponse({ error: error.message });
+        } catch (e) { /* ignore */ }
+      }
+    })();
+    return true; // 保持异步响应通道
   });
-  
+
   // 在页面上显示临时通知
   function showPageNotification(message, type = 'success') {
     // 移除现有通知
@@ -49,12 +83,12 @@
     if (existingNotification) {
       existingNotification.remove();
     }
-    
+
     // 创建通知元素
     const notification = document.createElement('div');
     notification.className = 'blinko-page-notification';
     notification.textContent = message;
-    
+
     // 样式
     const styles = {
       position: 'fixed',
@@ -72,9 +106,9 @@
       maxWidth: '300px',
       wordWrap: 'break-word'
     };
-    
+
     Object.assign(notification.style, styles);
-    
+
     // 添加动画样式
     if (!document.querySelector('#blinko-notification-styles')) {
       const style = document.createElement('style');
@@ -91,10 +125,10 @@
       `;
       document.head.appendChild(style);
     }
-    
+
     // 添加到页面
     document.body.appendChild(notification);
-    
+
     // 3秒后移除
     setTimeout(() => {
       if (notification.parentNode) {
@@ -119,10 +153,10 @@
       span.style.borderRadius = '3px';
       span.style.padding = '1px 2px';
       span.style.animation = 'blinko-highlight-flash 2s ease-out';
-      
+
       try {
         range.surroundContents(span);
-        
+
         // 添加闪烁动画
         if (!document.querySelector('#blinko-highlight-styles')) {
           const style = document.createElement('style');
@@ -136,7 +170,7 @@
           `;
           document.head.appendChild(style);
         }
-        
+
         // 2秒后移除高亮
         setTimeout(() => {
           if (span.parentNode) {
@@ -151,51 +185,10 @@
     }
   }
 
-  // 检测页面类型，用于智能分类
-  function detectPageType() {
-    const url = window.location.href;
-    const title = document.title.toLowerCase();
-    const domain = window.location.hostname;
-    
-    // 技术文档
-    if (domain.includes('github.com') || 
-        domain.includes('stackoverflow.com') ||
-        domain.includes('developer.mozilla.org') ||
-        title.includes('documentation') ||
-        title.includes('api')) {
-      return 'tech';
-    }
-    
-    // 新闻资讯
-    if (domain.includes('news') || 
-        title.includes('news') ||
-        domain.includes('bbc.com') ||
-        domain.includes('cnn.com')) {
-      return 'news';
-    }
-    
-    // 学术论文
-    if (domain.includes('arxiv.org') ||
-        domain.includes('scholar.google') ||
-        title.includes('paper') ||
-        title.includes('research')) {
-      return 'academic';
-    }
-    
-    // 博客文章
-    if (url.includes('/blog/') ||
-        domain.includes('medium.com') ||
-        domain.includes('dev.to')) {
-      return 'blog';
-    }
-    
-    return 'general';
-  }
-
   // 页面加载完成后的初始化
   function initializePage() {
     // 检测页面类型，为智能分类做准备
-    const pageType = detectPageType();
+    const pageType = ContentExtractor.detectPageType();
     if (pageType) {
       // 向background发送页面类型信息
       chrome.runtime.sendMessage({
@@ -229,8 +222,6 @@
       if (selectedText !== lastSelectedText) {
         lastSelectedText = selectedText;
 
-        console.log('选中文本变化:', selectedText ? `"${selectedText.substring(0, 50)}..."` : '无选中');
-
         // 通知side panel有新的选中文本
         try {
           chrome.runtime.sendMessage({
@@ -239,12 +230,11 @@
             timestamp: Date.now()
           });
         } catch (error) {
-          if (error.message.includes('Extension context invalidated')) {
+          if (error.message && error.message.includes('Extension context invalidated')) {
             console.log('扩展上下文失效，等待重新加载...');
-            // 扩展重新加载后会自动重新注入脚本
             return;
           }
-          console.error('发送选中文本消息失败:', error);
+          // 忽略其他错误
         }
       }
     }, 300); // 300ms防抖延迟
