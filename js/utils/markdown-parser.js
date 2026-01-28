@@ -64,6 +64,10 @@ export const MarkdownParser = {
               html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
               html = html.replace(/_(.+?)_/g, '<em>$1</em>');
 
+              // 清理未配对的 ** 符号（在格式处理后仍然存在的）
+              // 注意：只清理不在 HTML 标签内的 **
+              html = html.replace(/\*\*/g, '');
+
               // 11. 处理链接
               html = html.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
 
@@ -84,11 +88,19 @@ export const MarkdownParser = {
                      html = html.replace(`%%MATHINLINE${i}%%`, `<span class="math-inline">$${content}$</span>`);
               });
 
-              // 15. 处理段落（将连续的文本行转换为段落）
+              // 15. 处理段落和换行
+              // 先清理列表内的换行（列表项之间不需要额外换行）
+              html = html.replace(/<\/li>\n+<li>/g, '</li><li>');
+              html = html.replace(/<ul>\n+/g, '<ul>');
+              html = html.replace(/\n+<\/ul>/g, '</ul>');
+
+              // 处理段落分隔（两个或以上换行符 -> 新段落）
               html = html.replace(/\n\n+/g, '</p><p>');
+
+              // 剩余的单个换行符转为 br，但不在块级元素边界处
               html = html.replace(/\n/g, '<br>');
 
-              // 清理多余的空段落
+              // 清理多余的空段落和块级元素周围的 p 标签
               html = html.replace(/<p><\/p>/g, '');
               html = html.replace(/<p>(<h[1-3]>)/g, '$1');
               html = html.replace(/(<\/h[1-3]>)<\/p>/g, '$1');
@@ -102,6 +114,12 @@ export const MarkdownParser = {
               html = html.replace(/(<hr>)<\/p>/g, '$1');
               html = html.replace(/<p>(<table>)/g, '$1');
               html = html.replace(/(<\/table>)<\/p>/g, '$1');
+
+              // 清理列表周围的 br 标签
+              html = html.replace(/<br><ul>/g, '<ul>');
+              html = html.replace(/<\/ul><br>/g, '</ul>');
+              html = html.replace(/<br><\/li>/g, '</li>');
+              html = html.replace(/<li><br>/g, '<li>');
 
               return html;
        },

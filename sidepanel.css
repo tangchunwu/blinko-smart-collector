@@ -251,12 +251,26 @@ body {
   opacity: 0.7;
 }
 
+/* Markdown段落 - 减少空白 */
+.markdown-preview p {
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.markdown-preview p:first-child {
+  margin-top: 0;
+}
+
+.markdown-preview p:last-child {
+  margin-bottom: 0;
+}
+
 /* Markdown标题 */
 .markdown-preview h1,
 .markdown-preview h2,
 .markdown-preview h3 {
   font-weight: 600;
-  margin: 12px 0 8px 0;
+  margin: 8px 0 4px 0;
   color: var(--md-sys-color-on-surface);
 }
 
@@ -281,12 +295,13 @@ body {
 /* Markdown列表 */
 .markdown-preview ul,
 .markdown-preview ol {
-  margin: 8px 0;
+  margin: 4px 0;
   padding-left: 20px;
 }
 
 .markdown-preview li {
-  margin: 4px 0;
+  margin: 2px 0;
+  line-height: 1.4;
 }
 
 /* Markdown代码 */
@@ -346,7 +361,7 @@ body {
 .markdown-preview hr {
   border: none;
   border-top: 1px solid var(--md-sys-color-outline-variant);
-  margin: 12px 0;
+  margin: 8px 0;
 }
 
 /* Markdown表格 */

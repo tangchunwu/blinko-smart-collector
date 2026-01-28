@@ -9,8 +9,7 @@
     "storage",
     "scripting",
     "notifications",
-    "sidePanel",
-    "audioCapture"
+    "sidePanel"
   ],
   "host_permissions": [
     "http://*/*",

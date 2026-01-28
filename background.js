@@ -5,31 +5,44 @@ import { BlinkoService } from './js/services/blinko-service.js';
 import { ContentExtractor } from './js/utils/content-extractor.js';
 import { VoiceService } from './js/services/voice-service.js';
 
+// 辅助函数：安全创建菜单项（避免重复 ID 错误）
+function createMenuItem(options) {
+  chrome.contextMenus.create(options, () => {
+    // 读取 lastError 以清除它，避免 "Unchecked runtime.lastError" 警告
+    if (chrome.runtime.lastError) {
+      console.log(`菜单 ${options.id} 已存在，跳过创建`);
+    }
+  });
+}
+
 // 创建右键菜单
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
+  // 先清除已有菜单，避免重复 ID 错误
+  await chrome.contextMenus.removeAll();
+
   // AI总结菜单
-  chrome.contextMenus.create({
+  createMenuItem({
     id: 'aiSummary',
     title: '🤖 AI总结文章 (Ctrl+Shift+A)',
     contexts: ['page']
   });
 
   // 划词收集菜单
-  chrome.contextMenus.create({
+  createMenuItem({
     id: 'collectText',
     title: '✂️ 收集到Blinko (Ctrl+Shift+C)',
     contexts: ['selection']
   });
 
   // 保存页面菜单
-  chrome.contextMenus.create({
+  createMenuItem({
     id: 'savePage',
     title: '📌 保存页面到Blinko (Ctrl+Shift+S)',
     contexts: ['page']
   });
 
   // 智能分析菜单
-  chrome.contextMenus.create({
+  createMenuItem({
     id: 'smartAnalyze',
     title: '🧠 智能分析并收集',
     contexts: ['page']

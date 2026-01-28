@@ -906,14 +906,41 @@ class BlinkoSidePanel {
 
       // 获取页面内容
       let pageContent = '';
+      let pageTitle = currentTab?.title || '';
       try {
         const contentResponse = await chrome.tabs.sendMessage(currentTab.id, {
           action: 'getPageContent'
         });
-        pageContent = contentResponse?.content || '';
+
+        // 优先使用 ContentExtractor 提取的内容
+        if (contentResponse?.content && contentResponse.content.trim().length > 100) {
+          pageContent = contentResponse.content;
+          console.log('使用 ContentExtractor 提取的页面内容，长度:', pageContent.length);
+        } else {
+          // 如果内容太短或为空，尝试获取整个页面的文本
+          console.warn('ContentExtractor 返回内容太短或为空，尝试获取完整页面文本');
+          const fullPageResponse = await chrome.tabs.sendMessage(currentTab.id, {
+            action: 'getFullPageText'
+          });
+
+          // 使用页面 body 的完整文本内容作为回退
+          if (fullPageResponse?.content && fullPageResponse.content.trim().length > 100) {
+            pageContent = fullPageResponse.content;
+            console.log('使用回退方法获取的页面完整文本，长度:', pageContent.length);
+          } else {
+            // 如果还是没有内容，报告问题
+            console.warn('无法获取足够的页面内容进行总结');
+            throw new Error('页面内容提取失败：无法获取足够的文本内容。请确保页面已完全加载后重试。');
+          }
+        }
       } catch (error) {
-        console.warn('获取页面内容失败，使用标题:', error);
-        pageContent = currentTab?.title || '';
+        console.warn('获取页面内容失败:', error);
+        // 如果是我们主动抛出的错误，直接抛出
+        if (error.message.includes('页面内容提取失败')) {
+          throw error;
+        }
+        // 其他错误（如通信失败），提示用户
+        throw new Error('无法连接到页面内容脚本。请刷新页面后重试。');
       }
 
       // 发送流式请求到background script

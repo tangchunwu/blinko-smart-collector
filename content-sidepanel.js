@@ -17,6 +17,15 @@
             sendResponse(metadata);
             break;
 
+          case 'getFullPageText':
+            // 获取完整页面文本，用于回退
+            sendResponse({
+              content: document.body.innerText || '',
+              title: document.title,
+              url: window.location.href
+            });
+            break;
+
           case 'getSelectedText':
             sendResponse({ text: window.getSelection().toString() });
             break;
