@@ -1,6 +1,6 @@
 {
   "name": "blinko-smart-collector",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "description": "善思 Blinko 智能收集器 - 一个现代化的Chrome扩展，用于智能收集网页内容到Blinko笔记系统",
   "main": "manifest.json",
   "scripts": {

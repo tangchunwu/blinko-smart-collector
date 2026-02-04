@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "善思 Blinko智能收集器",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "智能收集网页内容到Blinko笔记，支持AI总结、划词收集和智能分类",
   "permissions": [
     "activeTab",
