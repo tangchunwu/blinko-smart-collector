@@ -1,3 +1,4 @@
+https://openclaw-tu.us.ci/file/1773731567442_image.png
 # 善思 Blinko 智能收集器
 
 一个现代化的Chrome扩展，用于智能收集网页内容到Blinko笔记系统。支持Chrome Side Panel、AI总结、选中文本总结、个人想法记录、智能标签管理等功能。
